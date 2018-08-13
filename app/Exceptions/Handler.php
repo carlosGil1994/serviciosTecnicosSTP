@@ -46,6 +46,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+
+        if($exception->getMessage() == 'Unauthenticated.'){
+            redirect('/')->with('flash', 'Por favor inicia sesión');
+        }
+
         return parent::render($request, $exception);
     }
 }

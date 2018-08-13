@@ -6,7 +6,6 @@
  */
 
 require('./bootstrap');
-
 window.Vue = require('vue');
 
 /**
@@ -16,7 +15,23 @@ window.Vue = require('vue');
  */
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
+Vue.component('ListMenu', require('./components/layout/Menu.vue'));
+Vue.component('item', require('./components/layout/item-menu.vue'));
+Vue.component('contentMenu', require('./components/layout/Content.vue'));
+Vue.component('hMenu', require('./components/layout/Header.vue'));
+Vue.component('modal', require('./components/layout/GModal.vue'));
+Vue.component('FModal', require('./components/layout/FormModal.vue'));
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    data() {
+        return {
+            showModal:false,
+        }
+    },
+    methods: {
+        close() {
+            this.showModal = false;
+        }
+    },
 });
