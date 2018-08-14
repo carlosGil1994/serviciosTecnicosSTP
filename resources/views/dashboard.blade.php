@@ -14,7 +14,7 @@
                 </div>
             @endif
 
-           {{-- {{\Illuminate\Support\Facades\Auth::user()->email}}--}}
+           <i-text :name="'TextField'"></i-text>
            {{Auth::user()->email}}
         </div>
         

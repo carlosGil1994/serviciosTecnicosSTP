@@ -22,6 +22,12 @@ Vue.component('hMenu', require('./components/layout/Header.vue'));
 Vue.component('modal', require('./components/layout/GModal.vue'));
 Vue.component('FModal', require('./components/layout/FormModal.vue'));
 
+
+
+
+///Inputs
+Vue.component('IText', require('./components/inputs/text.vue'));
+
 const app = new Vue({
     el: '#app',
     data() {
