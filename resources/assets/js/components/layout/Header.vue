@@ -28,7 +28,7 @@ import axios from 'axios';
             logout () {
                 var urlLogout = 'logout'
                 axios.post(urlLogout).then(function(response){
-                    location.href="http://localhost/ST/public"
+                    location.href="http://127.0.0.1:8080/"
                 })
             }
         },

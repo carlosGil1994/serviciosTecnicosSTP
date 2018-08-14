@@ -14,9 +14,11 @@
                 </div>
             @endif
 
-            {{\Illuminate\Support\Facades\Auth::user()->email}}
+           {{-- {{\Illuminate\Support\Facades\Auth::user()->email}}--}}
+           {{Auth::user()->email}}
         </div>
-
+        
+        
         <div slot="footer">
             Aqui un footer
         </div>

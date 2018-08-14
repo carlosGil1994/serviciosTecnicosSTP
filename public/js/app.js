@@ -48262,7 +48262,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         logout: function logout() {
             var urlLogout = 'logout';
             __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(urlLogout).then(function (response) {
-                location.href = "http://localhost/ST/public";
+                location.href = "http://127.0.0.1:8080/";
             });
         }
     }

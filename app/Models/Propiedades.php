@@ -19,4 +19,12 @@ class Propiedades extends Model
     public function ordenServicio(){
         return $this->hasMany('App\Orden_servicios','propiedad_id','id');
     }
+
+    public function solicitud(){
+        return $this->hasMany('App\Solicitudes','propiedad_id','id');
+    }
+
+    public function telefonos(){
+        return $this->hasMany('App\Tlfns_propiedades','propiedad_id','id');
+    }
 }

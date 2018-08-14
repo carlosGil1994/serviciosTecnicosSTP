@@ -37,5 +37,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Orden_servicios','cancelador_id','id');
     }
 
+    public function telefonos(){
+        return $this->hasMany('App\Tlfns_usuarios','user_id','id');
+    }
+
 
 }
