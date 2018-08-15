@@ -16,3 +16,7 @@ Route::get('/', 'Auth\LoginController@showLoginForm');
 Auth::routes();
 
 Route::get('/dashboard', 'HomeController@index')->name('home')->middleware('auth');
+
+Route::group(['prefix' => 'Bancos'], function () {
+    Route::post('add_new','BancoController@create')->name('add_banco');
+});

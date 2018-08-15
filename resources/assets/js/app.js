@@ -21,6 +21,7 @@ Vue.component('contentMenu', require('./components/layout/Content.vue'));
 Vue.component('hMenu', require('./components/layout/Header.vue'));
 Vue.component('modal', require('./components/layout/GModal.vue'));
 Vue.component('FModal', require('./components/layout/FormModal.vue'));
+Vue.component('CreateNew', require('./components/layout/createNew.vue'));
 
 
 
