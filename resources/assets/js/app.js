@@ -28,6 +28,9 @@ Vue.component('CreateNew', require('./components/layout/createNew.vue'));
 
 ///Inputs
 Vue.component('IText', require('./components/inputs/text.vue'));
+Vue.component('INumber', require('./components/inputs/number.vue'));
+Vue.component('ISelect', require('./components/inputs/select.vue'));
+Vue.component('ITextArea', require('./components/inputs/textArea.vue'));
 
 const app = new Vue({
     el: '#app',
