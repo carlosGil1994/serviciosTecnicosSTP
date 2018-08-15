@@ -2,6 +2,7 @@
     <div class="card bg-primary">
         <div class="card-header">
             <button class="btn" @click="showForm = true">+</button>
+            <button class="btn btn-danger" @click="showForm = false">x</button>
         </div>
         <div v-show="showForm" class="card-body">
             <form @submit.prevent="createRow" id="formulario">
