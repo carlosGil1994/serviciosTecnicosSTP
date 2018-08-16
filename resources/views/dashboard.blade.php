@@ -1,6 +1,6 @@
 @extends('layouts.menu')
 
-@section('content')
+@section('contenido')
     <create-new :route="'{{ route('add_banco') }}'">
         <div slot="inputs">
             <i-text :name="'TextValue'"></i-text>
