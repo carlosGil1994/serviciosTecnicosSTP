@@ -2,10 +2,12 @@
     <div class="container-fluid">
         <hr>
         <div class="row">
-            <slot name="options">
+            <div class="col-auto mr-auto">
+                <slot name="options">
 
-            </slot>
-            <div class="col-2">
+                </slot>
+            </div>
+            <div class="col-auto">
                 <form v-on:submit.prevent="logout">
                     <button class="btn btn-danger">
                         Cerrar Sesion

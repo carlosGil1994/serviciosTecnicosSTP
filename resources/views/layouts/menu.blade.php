@@ -26,8 +26,9 @@
 <div id="app">
 
     <h-menu>
-        <div slot="options" class="col">
+        <div slot="options">
             {{-- Aqui puedes meter vainas --}}
+            <button class="btn btn-primary">Hola mundo</button>
         </div>
 
         <div slot="sesion">
