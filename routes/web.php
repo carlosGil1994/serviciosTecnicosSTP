@@ -20,3 +20,14 @@ Route::get('/dashboard', 'HomeController@index')->name('home')->middleware('auth
 Route::group(['prefix' => 'Bancos'], function () {
     Route::post('add_new','BancoController@create')->name('add_banco');
 });
+
+
+// Rutas de test
+// Route::group(['prefix' => 'cargos'], function(){
+//     Route::get('/', 'CargoController@index')->name('cargos.index');
+//     Route::post('/buscar','CargoController@store');
+//     Route::post('/add_new', 'CargoController@create');
+//     Route::get('/get_item', 'CargoController@show');
+//     Route::get('/delete_item', 'CargoController@destroy');
+//     Route::post('/edit', 'CargoController@update');
+// });
