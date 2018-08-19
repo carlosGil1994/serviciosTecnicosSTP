@@ -26,6 +26,12 @@ Route::group(['prefix' => 'Bancos'], function () {
     Route::post('/edit', 'BancoController@update');
 });
 
+Route::group(['prefix' => 'Servicios'], function () {
+    Route::get('show/{id}','ServiciosController@show')->name('show_servicio');
+    Route::post('add_new','ServiciosController@store')->name('add_servicio');
+    Route::put('edit/{id}','ServiciosController@update')->name('edit_servicio');
+    Route::delete('delete','ServiciosController@delete')->name('delete_servicio');
+});
 
 // Rutas de test
 // Route::group(['prefix' => 'cargos'], function(){

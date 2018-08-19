@@ -46,7 +46,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-
+        if ($exception instanceof ModelNotFoundException) {
+            dd($exception);
+            $exception = new NotFoundHttpException($e->getMessage(), $exception);
+            return response()->json(['error' => 'Model not found'], 404);
+        }
         if($exception->getMessage() == 'Unauthenticated.'){
             redirect('/')->with('flash', 'Por favor inicia sesión');
         }
