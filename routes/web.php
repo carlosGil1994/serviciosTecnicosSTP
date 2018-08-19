@@ -22,10 +22,11 @@ Route::group(['prefix' => 'Bancos'], function () {
 });
 
 Route::group(['prefix' => 'Servicios'], function () {
+    Route::get('index','ServiciosController@index')->name('index');
     Route::get('show/{id}','ServiciosController@show')->name('show_servicio');
     Route::post('add_new','ServiciosController@store')->name('add_servicio');
     Route::put('edit/{id}','ServiciosController@update')->name('edit_servicio');
-    Route::delete('delete','ServiciosController@delete')->name('delete_servicio');
+    Route::delete('delete/{id}','ServiciosController@destroy')->name('delete_servicio');
 });
 
 // Rutas de test

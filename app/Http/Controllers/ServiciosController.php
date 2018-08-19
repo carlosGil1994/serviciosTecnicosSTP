@@ -15,7 +15,15 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        //
+        try{
+            $servicios=Servicios::all();
+            return response()->json([
+                'servicios' => $servicios
+            ],200);
+        }
+        catch(Exception $e){
+            return response()->json(['found' => false], 404);
+        } 
     }
 
     /**
@@ -102,7 +110,14 @@ class ServiciosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try{
+            $servicio=Servicios::findOrFail($id);
+            $servicio->update($request->all());
+            return response()->json(['update' => true]);
+        } 
+        catch(ModelNotFoundException $e){
+            return response()->json(['update' => false], 500);
+        }
     }
 
     /**
@@ -113,6 +128,13 @@ class ServiciosController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            $servicio=Servicios::findOrFail($id);
+            $servicio->delete();
+            return response()->json(['delete' => true]);
+        } 
+        catch(ModelNotFoundException $e){
+            return response()->json(['delete' => false], 500);
+        }
     }
 }
