@@ -25,7 +25,7 @@
                var $id = $(this).attr('data-id');
                $.ajax({
                    type:'GET',
-                   url: "{{url('admin/'.$mod.'/delete_item')}}",
+                   url: "{{url($mod.'/delete_item')}}",
                    dataType: 'json',
                    data:{id: $id},
                }).done(function(data){

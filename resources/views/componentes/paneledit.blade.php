@@ -6,7 +6,7 @@
         </button>
     </div>
     <div class="card-body body-edit">
-        <form  method="POST" id="frm_edit" role="form" data-toggle="validator" action="{{ url('admin/'.$mod.'/edit') }}">
+        <form  method="POST" id="frm_edit" role="form" data-toggle="validator" action="{{ url($mod.'/edit') }}">
             {{csrf_field()}} {{ method_field('POST') }}
             {{ $inputs }}
             <input type="hidden" name="item_id" id="item_id">
@@ -39,7 +39,7 @@
             console.log('hey desde el get item');
             $.ajax({
                 type:'GET',
-                url: "{{url('admin/'.$mod.'/get_item')}}",
+                url: "{{url($mod.'/get_item')}}",
                 dataType:'json',
                 data: {id: $id}
             }).done(function(data) {

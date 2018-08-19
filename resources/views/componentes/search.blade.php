@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-body">
-        <form method="POST" id="frm_search" role="form" data-toggle="validator" action="{{ url('admin/'.$mod.'/buscar') }}">
+        <form method="POST" id="frm_search" role="form" data-toggle="validator" action="{{ url($mod.'/buscar') }}">
             {{csrf_field()}} {{ method_field('POST') }}
             <div class="input-group input-group-lg">
                 <input type="search" id="search" name="query" class="form-control" placeholder="Buscar" required>
@@ -55,7 +55,7 @@
             console.log('hey desde el get item');
             $.ajax({
                 type:'GET',
-                url: "{{url('admin/'.$mod.'/get_item')}}",
+                url: "{{url($mod.'/get_item')}}",
                 dataType:'json',
                 data: {id: $id}
             }).done(function(data) {

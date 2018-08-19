@@ -18,7 +18,12 @@ Auth::routes();
 Route::get('/dashboard', 'HomeController@index')->name('home')->middleware('auth');
 
 Route::group(['prefix' => 'Bancos'], function () {
-    Route::post('add_new','BancoController@create')->name('add_banco');
+    Route::get('/', 'BancoController@index')->name('bancos.index');
+    Route::post('/buscar','BancoController@store');
+    Route::post('/add_new', 'BancoController@create');
+    Route::get('/get_item', 'BancoController@show');
+    Route::get('/delete_item', 'BancoController@destroy');
+    Route::post('/edit', 'BancoController@update');
 });
 
 
