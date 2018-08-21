@@ -43,9 +43,11 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            
             showTable();
-            function showTable(){
+            bindButtons();
+        });
+
+        function showTable(){
                 $('#table').DataTable({
                     processing: true,
                     serverSide: true,
@@ -57,13 +59,10 @@
                         { data: 'action', name: 'action', orderable: false, searchable: false }
                     ]
                 });
-                setTimeout(()=>{
-                    bindButtons();
-                },1500);
             }
 
             function bindButtons(){
-                $('button').click(function(){
+                $(document).on('click','.btn-table',function(){
                     $id = $(this).attr('id');
                     console.log($id);
                     if($(this).hasClass('eliminar')){
@@ -82,11 +81,8 @@
                     else if($(this).hasClass('editar')){
                         
                     }
-                        
                 });
             }
-            
-        });
     </script>
 
 @endsection

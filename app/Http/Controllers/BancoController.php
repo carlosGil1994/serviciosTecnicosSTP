@@ -65,8 +65,8 @@ class BancoController extends Controller
         return DataTables::of($bancos)
         ->addColumn('action', function ($bancos) {    
             $output= <<<EOT
-                <button class="btn btn-warning editar" id="$bancos->id">Editar</button>
-                <button class="btn btn-danger eliminar" id="$bancos->id">Eliminar</button>            
+                <button class="btn btn-warning editar btn-table" id="$bancos->id">Editar</button>
+                <button class="btn btn-danger eliminar btn-table" id="$bancos->id">Eliminar</button>            
 EOT;
             return $output;
         })->make();
