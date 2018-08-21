@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Equipos extends Model
 {
     protected $fillable = [
-        'descripcion', 'modelo'
+        'descripcion', 'modelo','precio'
     ];
 
     public function actividades(){

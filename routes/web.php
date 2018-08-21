@@ -27,13 +27,28 @@ Route::group(['prefix' => 'Bancos'], function () {
 });
 
 Route::group(['prefix' => 'Servicios'], function () {
-    Route::get('index','ServiciosController@index')->name('index');
+    Route::get('index','ServiciosController@index')->name('Servicios_index');
     Route::get('show/{id}','ServiciosController@show')->name('show_servicio');
     Route::post('add_new','ServiciosController@store')->name('add_servicio');
     Route::put('edit/{id}','ServiciosController@update')->name('edit_servicio');
     Route::delete('delete/{id}','ServiciosController@destroy')->name('delete_servicio');
 });
 
+Route::group(['prefix' => 'Equipos'], function () {
+    Route::get('index','EquiposController@index')->name('Equipos_index');
+    Route::get('show/{id}','EquiposController@show')->name('show_Equipo');
+    Route::post('add_new','EquiposController@store')->name('add_Equipo');
+    Route::put('edit/{id}','EquiposController@update')->name('update_Equipo');
+    Route::delete('delete/{id}','EquiposController@destroy')->name('delete_Equipo');
+});
+
+Route::group(['prefix' => 'Fallas'], function () {
+    Route::get('index','FallasController@index')->name('Fallas_index');
+    Route::get('show/{id}','FallasController@show')->name('show_Falla');
+    Route::post('add_new','FallasController@store')->name('add_Falla');
+    Route::put('edit/{id}','FallasController@update')->name('update_Falla');
+    Route::delete('delete/{id}','FallasController@destroy')->name('delete_Falla');
+});
 // Rutas de test
 // Route::group(['prefix' => 'cargos'], function(){
 //     Route::get('/', 'CargoController@index')->name('cargos.index');

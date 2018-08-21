@@ -16,8 +16,8 @@ class CreateFallasTable extends Migration
         Schema::create('fallas', function (Blueprint $table) {
             $table->increments('id');
             $table->text('descripcion');
-            $table->text('causa');
-            $table->text('solucion');
+            $table->text('causa')->nullable();
+            $table->text('solucion')->nullable();
             $table->timestamps();
         });
     }
