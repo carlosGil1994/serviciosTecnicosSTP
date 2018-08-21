@@ -19,10 +19,10 @@ Route::get('/dashboard', 'HomeController@index')->name('home')->middleware('auth
 
 Route::group(['prefix' => 'Bancos'], function () {
     Route::get('/', 'BancoController@index')->name('bancos.index');
-    Route::post('/buscar','BancoController@store');
+    Route::get('/buscar','BancoController@store');
     Route::post('/add_new', 'BancoController@create');
-    Route::get('/get_item', 'BancoController@show');
-    Route::get('/delete_item', 'BancoController@destroy');
+    Route::get('/get', 'BancoController@show')->name('bancos.show');
+    Route::get('/delete_item', 'BancoController@destroy')->name('bancos.delete');
     Route::post('/edit', 'BancoController@update');
 });
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Bancos;
+use DataTables;
 
 class BancoController extends Controller
 {
@@ -47,43 +48,7 @@ class BancoController extends Controller
     //  Cuando le das al boton buscar
     public function store(Request $request)
     {
-        $query = $request->input('query');
-        if(!empty($query)){
-            $rows = Bancos::where('nombre', 'LIKE', '%'.$query.'%')->get();
-        }else{
-            $rows = Bancos::all();
-        }
-        $output = '';
         
-        if($rows->count()){
-            $output.= <<<EOT
-            <div class="list-group">
-EOT;
-        foreach($rows as $result){
-            $output.=<<<EOT
-            <div class="list-group-item">
-                <a href="#" class="search-result" data-id="$result->id">
-                    <span>Nombre: <b>$result->nombre</b></span><br>
-                </a>
-            </div>
-EOT;
-        }
-        $output.=<<<EOT
-            </div>
-EOT;
-
-        }
-        else{
-            $output.=<<<EOT
-            <div class="list-group">
-                <div class="list-group-item">
-                    <span>No se encontraron registros</span>
-                </div>
-            </div>
-EOT;
-        }
-        return response()->json($output);
-
     }
 
     /**
@@ -96,15 +61,15 @@ EOT;
     //  EL panel verde
     public function show(Request $request)
     {
-        $id = $request->input('id');
-        $record = Bancos::find($id);
-        $output = <<<EOT
-            <div>
-                <span>Nombre: <b>$record->nombre</b></span><br>
-                <span>Creado: <b>$record->created_at</b></span><br>
-            </div>
+        $bancos = Bancos::all();
+        return DataTables::of($bancos)
+        ->addColumn('action', function ($bancos) {    
+            $output= <<<EOT
+                <button class="btn btn-warning editar" id="$bancos->id">Editar</button>
+                <button class="btn btn-danger eliminar" id="$bancos->id">Eliminar</button>            
 EOT;
-        return response()->json($output);
+            return $output;
+        })->make();
     }
 
     /**
@@ -113,7 +78,7 @@ EOT;
      * @param  \App\Facultades  $facultades
      * @return \Illuminate\Http\Response
      */
-    public function edit(Facultades $facultades)
+    public function edit()
     {
         
     }
