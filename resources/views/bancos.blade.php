@@ -79,7 +79,12 @@
                         
                     }
                     else if($(this).hasClass('editar')){
-                        
+                        $('#oculto_edit').toggle('slow');
+                        $('div.head-edit').find('span.head').html('Editar Registro '+ $id);
+                        $('form#frm_edit').attr('data-id', $id);
+                        $('#cerrar_edit').click(function() {
+                            $('#oculto_edit').toggle('slow');
+                        });
                     }
                 });
             }
