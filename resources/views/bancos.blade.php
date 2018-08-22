@@ -51,7 +51,7 @@
                 $('#table').DataTable({
                     processing: true,
                     serverSide: true,
-                    
+                    destroy: true,
                     ajax: "{{ route('bancos.show') }}",
                     type: 'GET',
                     columns: [
@@ -73,7 +73,7 @@
                             dataType: 'json',
                             data: {id : $id}
                             }).done((data)=>{
-                
+                                showTable();
                             });
                         }
                         

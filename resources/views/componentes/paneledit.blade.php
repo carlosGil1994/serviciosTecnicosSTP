@@ -31,6 +31,7 @@
                 data:$frm.serialize(),
             }).done(function(data){
                 $('#oculto_edit').toggle('slow');
+                showTable();
             });
         });
     });
