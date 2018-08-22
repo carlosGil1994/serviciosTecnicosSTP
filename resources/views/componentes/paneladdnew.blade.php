@@ -35,6 +35,7 @@
             }).done(function(data){
                 console.log(data);
                 $('#oculto').slideToggle('slow');
+                showTable();
             });
         });
 
