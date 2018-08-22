@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Equipos;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EquiposController extends Controller
@@ -79,13 +80,14 @@ class EquiposController extends Controller
     {
         try{
             $Equipo=Equipos::findOrFail($id);
+            return response()->json([
+                'Equipos' => $Equipo
+            ],200);
         }
         catch(ModelNotFoundException $e){
             return response()->json(['found' => false], 404);
         } 
-        return response()->json([
-            'Equipos' => $Equipo
-        ],200);
+       
     }
 
     /**

@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Fallas;
-use App\Equipos;
-use App\Actividades;
+use App\Materiales;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class FallasController extends Controller
+class MaterialesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,9 +17,9 @@ class FallasController extends Controller
     public function index()
     {
         try{
-            $Fallas=Fallas::all();
+            $Materiales=Materiales::all();
             return response()->json([
-                'Fallas' => $Fallas
+                'Materiales' => $Materiales
             ],200);
         }
         catch(Exception $e){
@@ -36,7 +34,7 @@ class FallasController extends Controller
      */
     public function create()
     {
-        
+        //
     }
 
     /**
@@ -47,12 +45,10 @@ class FallasController extends Controller
      */
     public function store(Request $request)
     {
-        //falta terminar
         $rules = [
             'descripcion'=> 'required',
-            /*'causa'=> '',
-            'solucion'=> 'required',*/
-        ];
+            'nombre'=> 'required|unique:materiales',
+            ];
  
         try {
             // Ejecutamos el validador y en caso de que falle devolvemos la respuesta
@@ -65,18 +61,7 @@ class FallasController extends Controller
                 ]);
             }
             // Si el validador pasa, almacenamos
-            //Fallas::create($request->all());
-            //$falla = new Fallas([$request->descripcion,$request->causa,$request->solucion]);
-           $Equipo=Equipos::findOrFail($request->equipo);
-           $falla=$Equipo->fallas()->create([
-                'descripcion' =>$request->descripcion,
-                'causa' =>$request->causa,
-                'solucion' =>$request->solucion,
-            ]);
-            if($request->has('actividad')){
-                $actividad=Actividades::findOrFail($request->actividad);
-                $actividad->fallas()->attach($falla->id);
-            };
+            Materiales::create($request->all());
             return response()->json(['created' => true]);
         } catch (Exception $e) {
             // Si algo sale mal devolvemos un error.
@@ -94,15 +79,14 @@ class FallasController extends Controller
     public function show($id)
     {
         try{
-            $Falla=Fallas::findOrFail($id);
+            $Material=Materiales::findOrFail($id);
             return response()->json([
-                'Falla' => $Falla
+                'Material' => $Material
             ],200);
         }
         catch(ModelNotFoundException $e){
             return response()->json(['found' => false], 404);
         } 
-        
     }
 
     /**
@@ -113,7 +97,7 @@ class FallasController extends Controller
      */
     public function edit($id)
     {
-       
+        //
     }
 
     /**
@@ -126,8 +110,8 @@ class FallasController extends Controller
     public function update(Request $request, $id)
     {
         try{
-            $Falla=Fallas::findOrFail($id);
-            $Falla->update($request->all());
+            $Material=Materiales::findOrFail($id);
+            $Material->update($request->all());
             return response()->json(['update' => true]);
         } 
         catch(ModelNotFoundException $e){
@@ -144,13 +128,12 @@ class FallasController extends Controller
     public function destroy($id)
     {
         try{
-            $Falla=Fallas::findOrFail($id);
-            $Falla->delete();
+            $Material=Materiales::findOrFail($id);
+            $Material->delete();
             return response()->json(['delete' => true]);
         } 
         catch(ModelNotFoundException $e){
             return response()->json(['delete' => false], 500);
         }
     }
-
 }

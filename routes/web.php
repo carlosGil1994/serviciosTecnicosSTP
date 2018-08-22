@@ -49,6 +49,13 @@ Route::group(['prefix' => 'Fallas'], function () {
     Route::put('edit/{id}','FallasController@update')->name('update_Falla');
     Route::delete('delete/{id}','FallasController@destroy')->name('delete_Falla');
 });
+Route::group(['prefix' => 'Materiales'], function () {
+    Route::get('index','MaterialesController@index')->name('Materiales_index');
+    Route::get('show/{id}','MaterialesController@show')->name('show_Material');
+    Route::post('add_new','MaterialesController@store')->name('add_Material');
+    Route::put('edit/{id}','MaterialesController@update')->name('update_Material');
+    Route::delete('delete/{id}','MaterialesController@destroy')->name('delete_Material');
+});
 // Rutas de test
 // Route::group(['prefix' => 'cargos'], function(){
 //     Route::get('/', 'CargoController@index')->name('cargos.index');
