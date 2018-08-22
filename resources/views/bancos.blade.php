@@ -45,6 +45,11 @@
         $(document).ready(function () {
             showTable();
             bindButtons();
+            $('#cerrar_edit').click(function(e) {
+                            e.preventDefault();
+                            console.log('safsaf');
+                            $('#oculto_edit').toggle('slow');
+                        });
         });
 
         function showTable(){
@@ -62,7 +67,8 @@
             }
 
             function bindButtons(){
-                $(document).on('click','.btn-table',function(){
+                $(document).on('click','.btn-table',function(e){
+                    e.preventDefault();
                     $id = $(this).attr('id');
                     console.log($id);
                     if($(this).hasClass('eliminar')){
@@ -82,9 +88,7 @@
                         $('#oculto_edit').toggle('slow');
                         $('div.head-edit').find('span.head').html('Editar Registro '+ $id);
                         $('form#frm_edit').attr('data-id', $id);
-                        $('#cerrar_edit').click(function() {
-                            $('#oculto_edit').toggle('slow');
-                        });
+                       
                     }
                 });
             }
