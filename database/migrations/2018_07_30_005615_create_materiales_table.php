@@ -17,6 +17,7 @@ class CreateMaterialesTable extends Migration
             $table->increments('id');
             $table->string('nombre');
             $table->string('descripcion');
+            $table->decimal('precio',9,3);
             $table->timestamps();
         });
     }

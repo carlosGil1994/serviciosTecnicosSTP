@@ -19,13 +19,13 @@ class FallasController extends Controller
     public function index()
     {
         try{
-            $Fallas=Fallas::all();
+            $Fallas=Fallas::with('equipos')->get(); //trae toda la info de las fallas join los equipos asociados a esas fallas
             return response()->json([
                 'Fallas' => $Fallas
             ],200);
         }
         catch(Exception $e){
-            return response()->json(['found' => false], 404);
+            return response()->json(['found' => false,"mensaje"=>$e->getMessage()], 404);
         } 
     }
 
@@ -49,9 +49,7 @@ class FallasController extends Controller
     {
         //falta terminar
         $rules = [
-            'descripcion'=> 'required',
-            /*'causa'=> '',
-            'solucion'=> 'required',*/
+            'descripcion'=> 'required'
         ];
  
         try {
@@ -68,20 +66,29 @@ class FallasController extends Controller
             //Fallas::create($request->all());
             //$falla = new Fallas([$request->descripcion,$request->causa,$request->solucion]);
            $Equipo=Equipos::findOrFail($request->equipo);
-           $falla=$Equipo->fallas()->create([
+           /*$falla=$Equipo->fallas()->create([
                 'descripcion' =>$request->descripcion,
                 'causa' =>$request->causa,
                 'solucion' =>$request->solucion,
-            ]);
-            if($request->has('actividad')){
+           ]);*/
+           $fallas = new Fallas;
+           ////// forma de guradar anidadamente cunado es many to many teniendo columnas adicionales en la tablla de union////////
+           $fallas->create(["descripcion"=>$request->descripcion,"causa"=>$request->causa,"solucion"=>$request->solucion])
+           ->equipos()->where("falla_id",$fallas->id)
+           ->save($Equipo,["actividad_id"=>$request->actividad]);
+           ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+          // dd( $Equipo);
+           //dd( $falla=Fallas::findOrFail(5)->pivot->actividad_id);
+           // $Equipo->fallas()->attach($request->actividad);
+            /*if($request->has('actividad')){
                 $actividad=Actividades::findOrFail($request->actividad);
                 $actividad->fallas()->attach($falla->id);
-            };
+            };*/
             return response()->json(['created' => true]);
         } catch (Exception $e) {
             // Si algo sale mal devolvemos un error.
             //\Log::info('Error creating user: '.$e);//esto es para hacer un log
-            return response()->json(['created' => false], 500);
+            return response()->json(['created' => false,'mensaje'=>$e->getMessage()], 500);
         }
     }
 
@@ -125,6 +132,18 @@ class FallasController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $rules = [
+            'descripcion'=> 'required'
+        ];
+        
+        $validator = \Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                'created' => false,
+                'errors'  => $validator->errors()->all()
+            ]);
+        }
+
         try{
             $Falla=Fallas::findOrFail($id);
             $Falla->update($request->all());

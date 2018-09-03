@@ -17,7 +17,6 @@ class CreatePropiedadesTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->string('nombre');
-            $table->string('telefono');
             $table->string('direccion');
             $table->timestamps();
         });

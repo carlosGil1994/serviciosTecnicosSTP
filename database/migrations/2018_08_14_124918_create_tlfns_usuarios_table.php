@@ -16,7 +16,7 @@ class CreateTlfnsUsuariosTable extends Migration
         Schema::create('tlfns_usuarios', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
-            $table->integer('numero');
+            $table->bigInteger('numero');
             $table->timestamps();
         });
     }

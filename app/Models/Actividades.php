@@ -19,7 +19,7 @@ class Actividades extends Model
     }
 
     public function equipos(){
-        return $this->belongsToMany('App\Equipos','equipos_por_actividad','actividad_id','equipo_id')->withPivot('cantidad');;
+        return $this->belongsToMany('App\Equipos','equipos_por_actividad','actividad_id','equipo_id')->withPivot('cantidad');
     }
 
     public function materiales(){
@@ -27,6 +27,6 @@ class Actividades extends Model
     }
 
     public function fallas(){
-        return $this->belongsToMany('App\Fallas','falla_por_actividades','actividad_id','falla_id');
+        return $this->belongsToMany('App\Fallas','falla_por_equipos','actividad_id','falla_id')->withPivot('equipo_id');
     }
 }

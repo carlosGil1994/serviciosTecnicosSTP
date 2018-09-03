@@ -16,7 +16,7 @@ class CreatePagoServiciosTable extends Migration
         Schema::create('pago_servicios', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('orden_servicio_id');
-            $table->float('pago_total');
+            $table->float('pago_total')->default(0);
             $table->string('estado');
             $table->timestamps();
         });

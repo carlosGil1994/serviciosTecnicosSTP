@@ -56,6 +56,47 @@ Route::group(['prefix' => 'Materiales'], function () {
     Route::put('edit/{id}','MaterialesController@update')->name('update_Material');
     Route::delete('delete/{id}','MaterialesController@destroy')->name('delete_Material');
 });
+Route::group(['prefix' => 'Usuarios'], function () {
+    Route::get('index','UsuariosController@index')->name('Usuarios_index');
+    Route::get('show/{id}','UsuariosController@show')->name('show_Usuario');
+    Route::post('add_new','UsuariosController@store')->name('add_Usuario');
+    Route::put('edit/{id}','UsuariosController@update')->name('update_Usuario');
+    Route::delete('delete/{id}','UsuariosController@destroy')->name('delete_Usuario');
+});
+Route::group(['prefix' => 'Propiedades'], function () {
+    Route::get('index','PropiedadesController@index')->name('Propiedades_index');
+    Route::get('show/{id}','PropiedadesController@show')->name('show_Propiedad');
+    Route::post('add_new','PropiedadesController@store')->name('add_Propiedad');
+    Route::put('edit/{id}','PropiedadesController@update')->name('update_Propiedad');
+    Route::delete('delete/{id}','PropiedadesController@destroy')->name('delete_Propiedad');
+});
+Route::group(['prefix' => 'Ordenes'], function () {
+    Route::get('index','OrdenesController@index')->name('Ordenes_index');
+    Route::get('show/{id}','OrdenesController@show')->name('show_Orden');
+    Route::post('add_new','OrdenesController@store')->name('add_Orden');
+    Route::put('edit/{id}','OrdenesController@update')->name('update_Orden');
+    Route::delete('delete/{id}','OrdenesController@destroy')->name('delete_Orden');
+    Route::put('cerrarOrden/{id}','OrdenesController@cerrarOrden')->name('cerrar_Orden');
+    Route::put('cancelarOrden/{id}','OrdenesController@cancelar')->name('cancelar_orden');
+    Route::get('calcular/{id}','OrdenesController@calculoMonto')->name('calcularMonto_Orden');
+});
+Route::group(['prefix' => 'Actividades'], function () {
+    Route::get('index','ActividadesController@index')->name('Actividades_index');
+    Route::get('show/{id}','ActividadesController@show')->name('show_Actividad');
+    Route::post('add_new','ActividadesController@store')->name('add_Actividad');
+    Route::put('edit/{id}','ActividadesController@update')->name('update_Actividad');
+    Route::delete('delete/{id}','ActividadesController@destroy')->name('delete_Actividad');
+});
+Route::group(['prefix' => 'Especialidades'], function () {
+    Route::get('index','EspecialidadesController@index')->name('Especialidades_index');
+    Route::get('show/{id}','EspecialidadesController@show')->name('show_Especialidad');
+    Route::post('add_new','EspecialidadesController@store')->name('add_Especialidad');
+    Route::put('edit/{id}','EspecialidadesController@update')->name('update_Especialidad');
+    Route::delete('delete/{id}','EspecialidadesController@destroy')->name('delete_Especialidad');
+    Route::put('quitarEspecialidad/{id}','EspecialidadesController@quitarEspecialidad')->name('quitar_Especialidad');
+    
+});
+
 // Rutas de test
 // Route::group(['prefix' => 'cargos'], function(){
 //     Route::get('/', 'CargoController@index')->name('cargos.index');

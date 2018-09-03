@@ -8,19 +8,22 @@ class Orden_servicios extends Model
 {
     //
     protected $fillable = [
-        'propiedad_id','fecha_ini', 'fecha_fin','descripcion','estado', 'creador_id','cancelador_id','comentario','servicio_id'
+        'propiedad_id','fecha_ini', 'fecha_fin','descripcion','estado', 'creador_id','cancelador_id','comentario','servicio_id','tecnico_id'
     ];
 
     public function propiedades(){
-       return $this->belongsTo('App\propiedades','propiedad_id');
+       return $this->belongsTo('App\Propiedades','propiedad_id');
     }
 
     public function servicio(){
-        return $this->belongsTo('App\Servicio','servicio_id');
+        return $this->belongsTo('App\Servicios','servicio_id');
     }
 
     public function creador(){
         return $this->belongsTo('App\User','creador_id','id');
+    }
+    public function tecnico(){
+        return $this->belongsTo('App\User','tecnico_id','id');
     }
     public function cancelador(){
         return $this->belongsTo('App\User','cancelador_id','id');
@@ -31,7 +34,7 @@ class Orden_servicios extends Model
     }
 
     public function pagoServicio(){
-        return $this->hasMany('App\PagoServicios','orden_servicio_id','id');
+        return $this->hasOne('App\PagoServicios','orden_servicio_id','id');
     }
 
     public function pagoTecnico(){

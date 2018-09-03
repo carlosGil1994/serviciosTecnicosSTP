@@ -21,9 +21,12 @@ class CreateOrdenServiciosTable extends Migration
             $table->text('descripcion');
             $table->string('estado');
             $table->integer('creador_id');
+            $table->integer('tecnico_id')->nullable();
             $table->integer('cancelador_id')->nullable();
             $table->text('comentario')->nullable();
             $table->integer('servicio_id');
+            $table->boolean('cierre_cliente')->default(false);
+            $table->boolean('cierre_tecnico')->default(false);
             $table->timestamps();
         });
     }

@@ -16,6 +16,7 @@ class CreateBancosTable extends Migration
         Schema::create('bancos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre');
+            $table->string('referencia');
             $table->timestamps();
         });
     }
