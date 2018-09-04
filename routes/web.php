@@ -57,7 +57,7 @@ Route::group(['prefix' => 'Materiales'], function () {
     Route::delete('delete/{id}','MaterialesController@destroy')->name('delete_Material');
 });
 Route::group(['prefix' => 'Usuarios'], function () {
-    Route::get('index','UsuariosController@index')->name('Usuarios_index');
+    Route::get('index','UsuariosController@index')->name('Usuarios.index');
     Route::get('show/{id}','UsuariosController@show')->name('show_Usuario');
     Route::post('add_new','UsuariosController@store')->name('add_Usuario');
     Route::put('edit/{id}','UsuariosController@update')->name('update_Usuario');
