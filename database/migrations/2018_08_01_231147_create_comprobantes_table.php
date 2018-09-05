@@ -20,7 +20,7 @@ class CreateComprobantesTable extends Migration
             $table->integer('banco_id');
             $table->integer('pago_tecnicos_id')->nullable();
             $table->integer('num_recibo');
-            $table->float('pago_parcial');
+            $table->decimal('pago_parcial',9,3);
             $table->string('estatus');
             $table->timestamps();
         });

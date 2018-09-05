@@ -18,6 +18,7 @@
 
 <script>
     $(document).ready(function(){
+      
         $('button#cerrar').click(function() {
             $('div#oculto').toggle('slow');
         });
@@ -33,9 +34,11 @@
                 dataType: 'json',
                 data:$frm.serialize(),
             }).done(function(data){
+                alert('Se ha guardado con exito');
                 console.log(data);
                 $('#oculto').slideToggle('slow');
                 showTable();
+                $('#frm_add_new')[0].reset();
             });
         });
 

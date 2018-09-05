@@ -17,7 +17,7 @@ class CreateEquiposTable extends Migration
             $table->increments('id');
             $table->string('descripcion');
             $table->string('modelo');
-            $table->float('precio',9,2);
+            $table->decimal('precio',9,3);
             $table->timestamps();
         });
     }

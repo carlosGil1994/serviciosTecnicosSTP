@@ -18,7 +18,7 @@ class CreateActividadesTable extends Migration
             $table->integer('orden_servicio_id');
             $table->integer('accion_id');
             $table->string('estado');
-            $table->integer('horas');
+            $table->integer('horas')->nullable();
             $table->timestamp('fechaCreacion');
             $table->timestamps();
         });

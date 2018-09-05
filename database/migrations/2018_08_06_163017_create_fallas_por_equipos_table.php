@@ -17,6 +17,7 @@ class CreateFallasPorEquiposTable extends Migration
             $table->increments('id');
             $table->integer('falla_id');
             $table->integer('equipo_id');
+            $table->integer('actividad_id')->nullable();
             $table->timestamps();
         });
     }

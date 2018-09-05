@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Propiedades extends Model
 {
     protected $fillable = [
-        'nombre', 'apellido','user_id','correo', 'usuario','clave','tipo',
+        'nombre', 'direccion','user_id',
     ];
 
 

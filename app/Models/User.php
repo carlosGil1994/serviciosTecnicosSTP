@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'apellido','email', 'usuario','password','tipo',
+        'name','direccion', 'apellido','email', 'usuario','password','tipo',
     ];
     /**
      * The attributes that should be hidden for arrays.
@@ -36,10 +36,15 @@ class User extends Authenticatable
     public function ordenCancelador(){
         return $this->hasMany('App\Orden_servicios','cancelador_id','id');
     }
+    public function especialidades(){
+        return $this->belongsToMany('App\Servicios','Especialidades','user_id','servicio_id');
+    }
 
     public function telefonos(){
         return $this->hasMany('App\Tlfns_usuarios','user_id','id');
     }
+
+
 
 
 }

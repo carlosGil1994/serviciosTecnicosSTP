@@ -9,7 +9,11 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
+<<<<<<< HEAD
         "yajra/laravel-datatables-oracle": "~8.0"
+=======
+        "yajra/laravel-datatables-oracle": "^8.7"
+>>>>>>> 06ae4218785dc5b42a22dc2769d4a84c85bed402
     },
     "require-dev": {
         "filp/whoops": "^2.0",
