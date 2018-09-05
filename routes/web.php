@@ -58,6 +58,7 @@ Route::group(['prefix' => 'Materiales'], function () {
 });
 Route::group(['prefix' => 'Usuarios'], function () {
     Route::get('index','UsuariosController@index')->name('Usuarios.index');
+    Route::get('usertable','UsuariosController@usertable')->name('Usuarios.usertable');
     Route::get('show/{id}','UsuariosController@show')->name('show_Usuario');
     Route::post('add_new','UsuariosController@store')->name('add_Usuario');
     Route::put('edit/{id}','UsuariosController@update')->name('update_Usuario');

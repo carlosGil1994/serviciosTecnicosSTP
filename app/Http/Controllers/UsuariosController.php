@@ -9,6 +9,7 @@ use App\Propiedades;
 use App\Servicios;
 use Illuminate\Support\Facades\Hash;
 use Exception;
+use DataTables;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UsuariosController extends Controller
@@ -36,6 +37,15 @@ class UsuariosController extends Controller
             'cantidad' => 0,
             'header' => 'Usuarios'
         ));
+    }
+
+    public function usertable()
+    {
+        $users = User::all();
+        return DataTables::of($users)
+        ->addColumn('action', function ($user) {
+            return '<a href="#edit-'.$user->id.'" data="'.$user->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+        })->make();
     }
 
     /**
