@@ -317,6 +317,43 @@
         @endslot
     @endcomponent
     <script>
+
+        function bindTipo(elemento){
+            elemento.change(function(){
+                let valorCambiado =$(this).val();
+                console.log(valorCambiado);
+                if(valorCambiado == 4){
+                    $('#especialidadId').css('display','none');
+                    $('#propId').css('display','block');
+                }
+                if(valorCambiado == 2){
+                    //console.log($frm.attr('action'));
+                    $.ajax({
+                        url: "{{ url('Servicios/index')}}",
+                        data: "&_token={{ csrf_token()}}",
+                        type:'GET',
+                        dataType: 'json',
+                }).done(function(data){
+                    //alert('Se ha guardado con exito');
+                    console.log(data);
+                    data.servicios.forEach(element => {
+                       // console.log(element);
+                        $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
+                    });
+                    //$('#oculto').slideToggle('slow');
+                    //$('#frm_add_new')[0].reset();
+                });
+                    //$('#servicio').
+                    $('#propId').css('display','none');
+                    $('#especialidadId').css('display','block');
+                }
+                if(valorCambiado == 3){
+                    $('#propId').css('display','none');
+                    $('#especialidadId').css('display','none');
+                }
+            });
+        }
+
         $(document).ready(function(){
             function showTable(){
                 $('#table').DataTable({
@@ -423,39 +460,11 @@
                 }
             });
             // para que funciones el tab
-            $('#tipo').change(function(){
-                let valorCambiado =$(this).val();
-                console.log(valorCambiado);
-                if(valorCambiado == 4){
-                    $('#especialidadId').css('display','none');
-                    $('#propId').css('display','block');
-                }
-                if(valorCambiado == 2){
-                    //console.log($frm.attr('action'));
-                    $.ajax({
-                        url: "{{ url('Servicios/index')}}",
-                        data: "&_token={{ csrf_token()}}",
-                        type:'GET',
-                        dataType: 'json',
-                }).done(function(data){
-                    //alert('Se ha guardado con exito');
-                    console.log(data);
-                    data.servicios.forEach(element => {
-                       // console.log(element);
-                        $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
-                    });
-                    //$('#oculto').slideToggle('slow');
-                    //$('#frm_add_new')[0].reset();
-                });
-                    //$('#servicio').
-                    $('#propId').css('display','none');
-                    $('#especialidadId').css('display','block');
-                }
-                if(valorCambiado == 3){
-                    $('#propId').css('display','none');
-                    $('#especialidadId').css('display','none');
-                }
+            console.log($('select[name="tipo"]'));
+            $('select[name="tipo"]').each(function(i,o){
+                bindTipo($(o));
             });
+            
         });
        
      </script>
