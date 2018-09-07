@@ -35,6 +35,7 @@ Route::group(['prefix' => 'Servicios'], function () {
 });
 
 Route::group(['prefix' => 'Equipos'], function () {
+    Route::get('busqueda/{busqueda}','EquiposController@busqueda')->name('Equipos_busqueda');
     Route::get('index','EquiposController@index')->name('Equipos_index');
     Route::get('show/{id}','EquiposController@show')->name('show_Equipo');
     Route::post('add_new','EquiposController@store')->name('add_Equipo');
@@ -50,6 +51,7 @@ Route::group(['prefix' => 'Fallas'], function () {
     Route::delete('delete/{id}','FallasController@destroy')->name('delete_Falla');
 });
 Route::group(['prefix' => 'Materiales'], function () {
+    Route::get('busqueda/{busqueda}','MaterialesController@busqueda')->name('Materiales_busqueda');
     Route::get('index','MaterialesController@index')->name('Materiales_index');
     Route::get('show/{id}','MaterialesController@show')->name('show_Material');
     Route::post('add_new','MaterialesController@store')->name('add_Material');
@@ -82,8 +84,11 @@ Route::group(['prefix' => 'Ordenes'], function () {
     Route::get('calcular/{id}','OrdenesController@calculoMonto')->name('calcularMonto_Orden');
 });
 Route::group(['prefix' => 'Actividades'], function () {
-    Route::get('index','ActividadesController@index')->name('Actividades_index');
+    Route::get('Ordenestable','ActividadesController@Ordenestable')->name('Actividades.Ordenestable');
+    Route::get('index','ActividadesController@index')->name('Actividades.index');
     Route::get('show/{id}','ActividadesController@show')->name('show_Actividad');
+    Route::get('showActividades/{id}','ActividadesController@showActividades')->name('show_Actividades');
+    Route::get('ActividadesTable/{id}','ActividadesController@ActividadesTable')->name('ActividadesTable');
     Route::post('add_new','ActividadesController@store')->name('add_Actividad');
     Route::put('edit/{id}','ActividadesController@update')->name('update_Actividad');
     Route::delete('delete/{id}','ActividadesController@destroy')->name('delete_Actividad');

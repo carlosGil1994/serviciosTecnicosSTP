@@ -9,6 +9,7 @@ use App\Equipos;
 use App\Orden_servicios;
 use App\Materiales;
 use App\PagoServicios;
+use DataTables;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,6 +17,7 @@ use Monolog\Handler\NullHandler;
 
 class ActividadesController extends Controller
 {
+    const MODEL = 'Actividades';
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +25,11 @@ class ActividadesController extends Controller
      */
     public function index()
     {
-        //
+        return view('Actividades')->with(array(
+            'mod' => self::MODEL,
+            'cantidad' => 0,
+            'header' => 'Ordenes'
+        ));
     }
 
     /**
@@ -35,7 +41,56 @@ class ActividadesController extends Controller
     {
         //
     }
+    // esta es para mostrar la pantalla donde se mostraran las activiades de una orden en especifico
+    public function showActividades($id){
+        $acciones= Acciones::all();
+        return view('OrdenActividades')->with(array(
+            'mod' => self::MODEL,
+            'cantidad' => 0,
+            'header' => 'Actividades',
+            'id'=> $id,
+            'acciones'=> $acciones
+        ));
+    }
 
+    public function ActividadesTable($id)
+    {
+        //aqi tiene que ser las ornenes asociadas a un tecnico en especifico
+        $actividades = Orden_servicios::findOrFail($id)->actividades;
+       /* foreach ($orders as $order) {
+            $order['cliente']=$order->propiedades->user->name;
+            $order['propiedad']=$order->propiedades->nombre;
+            $order['servicio']=$order->servicio->descripcion;
+        }*/
+        return DataTables::of($actividades)
+        ->addColumn('action', function ($actividad) {
+            $output = <<<EOT
+            <a href="#edit-'.$actividad->id.'" data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
+EOT;
+        $output .=' <a href='."'".url("Actividades/showActividades")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+            return $output;
+        })->make();
+    }
+
+
+    public function Ordenestable()
+    {
+        //aqi tiene que ser las ornenes asociadas a un tecnico en especifico
+        $orders = Orden_servicios::all();
+        foreach ($orders as $order) {
+            $order['cliente']=$order->propiedades->user->name;
+            $order['propiedad']=$order->propiedades->nombre;
+            $order['servicio']=$order->servicio->descripcion;
+        }
+        return DataTables::of($orders)
+        ->addColumn('action', function ($order) {
+            $output = <<<EOT
+            <a href="#edit-'.$order->id.'" data="'.$order->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+EOT;
+        $output .=' <a href='."'".url("Actividades/showActividades")."/".$order->id."'".'"data="'.$order->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>Actividades</a>';
+            return $output;
+        })->make();
+    }
     /**
      * Store a newly created resource in storage.
      *

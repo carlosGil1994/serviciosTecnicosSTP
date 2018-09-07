@@ -19,10 +19,11 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>nombre</th>
-                <th>apellido</th>
-                <th>direccion</th>
-                <th>action</th>
+                <th>Orden</th>
+                <th>Descripcion</th>
+                <th>Servicio</th>
+                <th>Cliente</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -193,23 +194,26 @@
                     processing: true,
                     serverSide: true,
                     destroy: true,
-                    ajax: "{{ url('Usuarios/usertable')}}",
+                    ajax: "{{ url('Actividades/Ordenestable')}}",
                     type: 'GET',
                     columns: [
-                        {data: 'name', name: 'name' },
-                        {data:'apellido',name:'apellido'},
-                        {data:'direccion',name:'direccion'},
-                        { data: 'action', name: 'action', orderable: false, searchable: false }
+                        {data: 'id', name: 'id' },
+                        {data:'descripcion',name:'descripcion'},
+                        {data:'servicio.descripcion', name:'servicio.descripcion'},
+                        {data:'cliente', name:'cliente'},
+                        { data:'action', name: 'action', orderable: false, searchable: false }
                     ]   
                 });
             }
 
-            function bindButtons(){
+           /* function bindButtons(){
                 $(document).on('click','.btn-table',function(e){
                     e.preventDefault();
                     $id = $(this).attr('data');
                     console.log($id);
-                  
+                   if($(this).hasClass('crear')){
+                        $('#oculto').toggle('slow');
+                   }
                      if($(this).hasClass('editar')){
                         $.ajax({
                             url: "{{url('Usuarios/show')}}/"+$id,
@@ -263,20 +267,20 @@
                             $('#oculto').toggle('slow');
                             // $('div.head-edit').find('span.head').html('Editar Registro '+ $id);
                             //$('form#frm_edit').attr('data-id', $id);
-                           /* data.servicios.forEach(element => {
+                           // data.servicios.forEach(element => {
                             // console.log(element);
-                             $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
-                            });*/
+                           //  $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
+                           // });
                     //$('#oculto').slideToggle('slow');
                     //$('#frm_add_new')[0].reset();
                         });
                        
                     }
                 });
-            }
+            }*/
 
             showTable();
-            bindButtons();
+           // bindButtons();
             /*$('#cerrar_edit').click(function(e) {
                 e.preventDefault();
                 console.log('safsaf');

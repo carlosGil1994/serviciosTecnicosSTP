@@ -36,6 +36,14 @@ class EquiposController extends Controller
     {
         //
     }
+    public function busqueda($busqueda)
+    {
+        $Equipos= Equipos::where('descripcion','LIKE','%'.$busqueda.'%')
+        ->orWhere('modelo','LIKE','%'.$busqueda.'%')->get();
+        return response()->json([
+            'Equipos' => $Equipos
+        ],200);
+    }
 
     /**
      * Store a newly created resource in storage.

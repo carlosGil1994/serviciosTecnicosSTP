@@ -1,3 +1,4 @@
+<div class="container">
 <div class="card text-white bg-primary" id="oculto" style="display: none">
     <div class="card-header">
         Agregar Nuevo
@@ -7,13 +8,15 @@
     </div>
     <div class="card-body">
         <form  method="POST" id="frm_add_new" role="form" data-toggle="validator" action="{{ url($mod.'/add_new') }}">
-            {{csrf_field()}} {{ method_field('POST') }}
+            {{csrf_field()}}
 
             {{ $inputs }}
 
             <button class="btn btn-danger" id="send" >Agregar</button>
         </form>
     </div>
+</div>
+
 </div>
 
 <script>
@@ -28,8 +31,9 @@
             e.preventDefault();
             $url = $frm.attr('action');
             $token = $('input[name="_token"]').val();
+            $method= $frm.attr('method');
             $.ajax({
-                type:'POST',
+                type:$method,
                 url:$url,
                 dataType: 'json',
                 data:$frm.serialize(),

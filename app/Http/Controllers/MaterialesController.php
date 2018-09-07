@@ -27,6 +27,14 @@ class MaterialesController extends Controller
         } 
     }
 
+    public function busqueda($busqueda)
+    {
+        $Materiales= Materiales::where('nombre','LIKE','%'.$busqueda.'%')->get();
+        return response()->json([
+            'Materiales' => $Materiales
+        ],200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

@@ -189,7 +189,7 @@ class UsuariosController extends Controller
     public function show($id)
     {
         try{
-            $usuarios=User::find($id)::with('telefonos','propiedades')->get();
+            $usuarios=User::with('telefonos','especialidades')->where('id',$id)->first();
             return response()->json([
                 'usuarios' => $usuarios
             ],200);
@@ -207,7 +207,7 @@ class UsuariosController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**
@@ -219,34 +219,98 @@ class UsuariosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->telefonos=[
-            ['numero'=>424],
-            ['numero'=>4249243767]
-        ];
-        try{
-            /////////// esto hay que cambiarlo para que funcione con un arreglo enviado desde el front////
-           // $telefonos = explode(',', $request->telefonos);
-            foreach ($request->telefonos as $key => $telefono) {
-                $telefonoarray[]['numero']=$telefono['numero'];
-             }
-           // $ids=explode(',', $request->ids);
-            ///////////////////////////////////////////////////////////////////////////////////////////////
-            $usuario=User::findOrFail($id);
-            $usuario->update(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password)]);
-            $telefonos = $usuario->telefonos;
-            foreach ($telefonos as $key => $telefono) {
-                $telefono->delete();
+        if(isset($request->serviciosT)){
+            $servicios = explode(',', $request->serviciosT);
+            foreach ($servicios as $servicio) {
+                $servicioarray[]['servicio']=$servicio;
             }
-            $usuario->telefonos()->createMany($telefonoarray);
+            //dd($servicioarray);
+        }
+        if(isset($request->telefonos)){
+            $telefonos = explode(',', $request->telefonos);
+            foreach ($telefonos as $telefono) {
+                $telefonoarray[]['numero']=$telefono;
+            }
+        }
+        try{
+            if($request->tipo == 4 ){
+                $usuario=User::findOrFail($id);
+                $usuario->update(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password)]);
+                $telefonos = $usuario->telefonos;
+                if(isset($request->telefonos)){
+                    foreach ($telefonos as $key => $telefono) {
+                        $telefono->delete();
+                    }
+                    $usuario->telefonos()->createMany($telefonoarray);
+                }
+                
+            }
+            if($request->tipo == 3 ){
+                    /////////// esto hay que cambiarlo para que funcione con un arreglo enviado desde el front////
+                ///////////////////////////////////////////////////////////////////////////////////////////////
+                $usuario=User::findOrFail($id);
+                $usuario->update(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password)]);
+                $telefonos = $usuario->telefonos;
+                if(isset($request->telefonos)){
+                    foreach ($telefonos as $key => $telefono) {
+                        $telefono->delete();
+                    }
+                    $usuario->telefonos()->createMany($telefonoarray);
+                }
 
-             /*foreach ($telefonos as $telefono) {
-                for ($i=0; $i < count($ids) ; $i++) { 
-                    if($telefono->id == $ids[$i]){
-                        $telefono->numero=$telefonoarray[$i]['numero'];
+                /*foreach ($telefonos as $telefono) {
+                    for ($i=0; $i < count($ids) ; $i++) { 
+                        if($telefono->id == $ids[$i]){
+                            $telefono->numero=$telefonoarray[$i]['numero'];
+                        }
+                    }
+                    $telefono->save();
+                }*/
+            }
+            /*if($request->tipo == 4 ){
+                $usuario=User::findOrFail($id);
+                $usuario->update(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password)]);
+                $telefonos = $usuario->telefonos;
+                $propiedades = $usuario->propiedades;
+                foreach ($propiedades as $key => $propiedad) {
+                    $propiedad->delete();
+                }
+                foreach ($telefonos as $key => $telefono) {
+                    $telefono->delete();
+                }
+
+                $usuario->telefonos()->createMany($telefonoarray);
+
+            }*/
+            if($request->tipo == 2){
+               // dd($servicioarray);
+                $usuario=User::findOrFail($id);
+                $usuario->update(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password)]);
+                $telefonos = $usuario->telefonos;
+                $especialidades= $usuario->especialidades;
+               /* foreach ($telefonos as $key => $telefono) {
+                    $telefono->delete();
+                }*/
+                foreach ($especialidades as $key => $especialidad) {
+                    //dd($especialidad->id);
+                    $usuario->especialidades()->detach($especialidad->id);
+                }
+                if(isset($request->telefonos)){
+                    foreach ($telefonos as $key => $telefono) {
+                        $telefono->delete();
+                    }
+                    $usuario->telefonos()->createMany($telefonoarray);
+                }
+                if(isset($request->serviciosT)){
+                    foreach ($servicioarray as $servicio) {
+                        //dd($servicio['servicio']);
+                        $serv= Servicios::where('descripcion',$servicio['servicio'])->first();
+                        //dd( $serv);
+                        $usuario->especialidades()->save($serv);
                     }
                 }
-                $telefono->save();
-             }*/
+            }
+            
             
             return response()->json(['update' => true]);
         } 

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 class OrdenesController extends Controller
 {
+    const MODEL = 'Orden_servicios';
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +22,7 @@ class OrdenesController extends Controller
      */
     public function index()
     {
-        
+    
     }
 
     /**
@@ -33,6 +34,7 @@ class OrdenesController extends Controller
     {
         //
     }
+
 
     /**
      * Store a newly created resource in storage.

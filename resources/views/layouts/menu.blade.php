@@ -58,6 +58,7 @@
                 <li>
                     <a href="{{ route('bancos.index') }}">Bancos</a>
                     <a href="{{ route('Usuarios.index') }}">Crear Usuarios</a>
+                    <a href="{{ route('Actividades.index') }}">Acividades</a>
                 </li>
             </ul>
         </nav>

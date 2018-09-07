@@ -22,6 +22,8 @@
 <script>
     $(document).ready(function(){
         $('#btn-add-new').click(function() {
+           // $('#send').html('editar');
+           // $('#frm_add_new').attr('action','{{ url('Servicios/index')}}');
             $('div#oculto').toggle('slow');
             $('div.content-search').html('');
         });
