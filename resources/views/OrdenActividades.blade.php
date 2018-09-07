@@ -281,10 +281,11 @@
                     $('#equipos').html('<option value="">Escoger Equipos</option>');
                     data.Equipos.forEach(element => {
                         let $aux=new Object();
+                        $aux.equipo_id=element.id;
                         $aux.descripcion=element.descripcion;
                         $aux.modelo=element.modelo;
                        // console.log(element);
-                        $('#equipos').append('<option data="'+element.descripcion+' modelo '+element.modelo+'"'+'value='+element.id+'>'+element.descripcion+' modelo '+element.modelo+'</option>');
+                        $('#equipos').append('<option data="'+element.descripcion+' modelo '+element.modelo+'"'+'value='+JSON.stringify($aux)+'>'+element.descripcion+' modelo '+element.modelo+'</option>');
                     });
                     //$('#oculto').slideToggle('slow');
                     //$('#frm_add_new')[0].reset();
@@ -314,8 +315,9 @@
                  e.preventDefault();
                 // console.log($("#servicio").val());
                 if($("#equipos").val()!='' && $("#cantidadE").val()!=''){
+                    $equipoJson=JSON.parse($("#equipos").val());
                     let $aux=new Object();
-                    $aux.equipo=$("#equipos").val();
+                    $aux.equipo=$equipoJson.equipo_id;
                     $aux.cantidad=$("#cantidadE").val();
                     $equipos.push($aux);
                     console.log('aqui se agrego al array equipos')
