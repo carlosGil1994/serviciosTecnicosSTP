@@ -41,6 +41,7 @@
                 alert('Se ha guardado con exito');
                 console.log(data);
                 $('#oculto').slideToggle('slow');
+                showTable();
                 $('#frm_add_new')[0].reset();
             });
         });

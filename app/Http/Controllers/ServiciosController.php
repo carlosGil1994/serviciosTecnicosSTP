@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Servicios;
+use App\User;
+use DataTables;
 use Illuminate\Http\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ServiciosController extends Controller
@@ -15,7 +17,7 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        try{
+        /*try{
             $servicios=Servicios::all();
             return response()->json([
                 'servicios' => $servicios
@@ -23,7 +25,12 @@ class ServiciosController extends Controller
         }
         catch(Exception $e){
             return response()->json(['found' => false], 404);
-        } 
+        } */
+        $users = User::all();
+        return DataTables::of($users)
+        ->addColumn('action', function ($user) {
+            return '<a href="#edit-'.$user->id.'" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+        })->make();
     }
 
     /**
