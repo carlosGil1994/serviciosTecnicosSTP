@@ -91,6 +91,7 @@ Route::group(['prefix' => 'Actividades'], function () {
     Route::get('ActividadesTable/{id}','ActividadesController@ActividadesTable')->name('ActividadesTable');
     Route::post('add_new','ActividadesController@store')->name('add_Actividad');
     Route::put('edit/{id}','ActividadesController@update')->name('update_Actividad');
+    Route::put('completar/{id}','ActividadesController@completar')->name('completar_Actividad');
     Route::delete('delete/{id}','ActividadesController@destroy')->name('delete_Actividad');
 });
 Route::group(['prefix' => 'Especialidades'], function () {

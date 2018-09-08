@@ -65,11 +65,18 @@ class ActividadesController extends Controller
         return DataTables::of($actividades)
         ->addColumn('action', function ($actividad) {
             $output = <<<EOT
-            <a href="#edit-'.$actividad->id.'" data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
+            <a data="$actividad->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
 EOT;
-        $output .=' <a href='."'".url("Actividades/showActividades")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        $output .=' <a data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             return $output;
         })->make();
+    }
+
+    public function completar($id){
+        $actividad= Actividades::findOrFail($id);
+        $actividad->update(['estado'=>'completada']);
+        return response()->json(['update' => true], 200);
     }
 
 
@@ -216,68 +223,34 @@ EOT;
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //prueba sin postman porque es un rollo pasar arreglos por ahi
-       /* $request->equipo_id=[
-            [
-                'equipo' => 1 ,
-                'cantidad' => 2
-
-            ],
-            [
-                'equipo' => 2 ,
-                'cantidad' => 3
-            ]
-        ];
-        $request->material_id=[
-            [
-                'material'=> 1,
-                'metros'=>4
-            ],
-            [
-                'material'=>2,
-                'cantidad'=>1
-            ]
-        ];*/
-        
+    {     
+        $datos=[];
+        $datos['accion_id']=$request->accion;
+        $datos['horas']=$request->horas;
+        $datos['equipo_id']=json_decode($request->equiposT, true);
+        $datos['material_id']=json_decode($request->materialesT, true);
         try {
-            $rules = [
-                'orden_servicio_id'=> 'required|exists:orden_servicios,id',
-                'horas'=> 'numeric|nullable',
-                'equipo_id'=>'numeric|nullable',
-                'cantidad_equipos'=>'numeric|nullable',
-                'material_id'=>'numeric|nullable',
-                'material_metros'=>'numeric|nullable',
-                'cantidad_materiales'=>'numeric|nullable'
-            ];
-            $validator = \Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'created' => false,
-                    'errors'  => $validator->errors()->all()
-                 ]);
-            }
             $actividad= Actividades::findOrFail($id);
-            $actividad->update(['horas'=>$request->horas]);
+            $actividad->update(['horas'=>$datos['horas']]);
+            $actividad->equipos()->detach();
+            $actividad->materiales()->detach();
             //si se esta agregando un equipo a la actividad
-            if(isset($request->equipo_id)){
-                $actividad->equipos()->where("actividad_id",$actividad->id)->detach();
-                foreach ($request->equipo_id as $equipo) {
+            if(isset($datos['equipo_id'])&& $datos['equipo_id']!=''){
+                foreach ($datos['equipo_id'] as $equipo) {
                     $Equipo=Equipos::findOrFail($equipo['equipo']);
                      $actividad->equipos()->where("actividad_id",$actividad->id)
                      ->save($Equipo,['cantidad'=>$equipo['cantidad']]);
                  }
             }
             //si se esta agregando un meterial a la actividad
-            if(isset($request->material_id)){
-                $actividad->materiales()->where("actividad_id",$actividad->id)->detach();
-                foreach ($request->material_id as  $Material) {
-                    $material=Materiales::findOrFail($Material['material']);
-                   if(isset($Material['metros'])){
+            if(isset($datos['material_id'])&& $datos['material_id']!=''){
+                foreach ($datos['material_id'] as  $Material) {
+                    $material=Materiales::findOrFail($Material['material_id']);
+                   if(isset($Material['metros']) && $Material['metros']!=''){
                         $actividad->materiales()->where("actividad_id",$actividad->id)
-                        ->save($material,['metros'=>$request->material_metros]);
+                        ->save($material,['metros'=>$Material['metros']]);
                     }
-                    if(isset($Material['cantidad'])){
+                    if(isset($Material['cantidad']) && $Material['cantidad']!=''){
                         $actividad->materiales()->where("actividad_id",$actividad->id)
                         ->save($material,['cantidad'=>$Material['cantidad']]);
                     }
