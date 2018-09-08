@@ -150,6 +150,7 @@
                                 </table>  
                             </div>
                             <input id="materialesT" name="materialesT" type="hidden">
+                            <input id="ordenid" name="ordenid" value="{{$id}}" type="hidden">
                         </div>
                     </div>
                 </div>
@@ -280,12 +281,12 @@
                     console.log(data);
                     $('#equipos').html('<option value="">Escoger Equipos</option>');
                     data.Equipos.forEach(element => {
-                        let $aux=new Object();
+                        var $aux=new Object();
                         $aux.equipo_id=element.id;
                         $aux.descripcion=element.descripcion;
                         $aux.modelo=element.modelo;
-                       // console.log(element);
-                        $('#equipos').append('<option data="'+element.descripcion+' modelo '+element.modelo+'"'+'value='+JSON.stringify($aux)+'>'+element.descripcion+' modelo '+element.modelo+'</option>');
+                        console.log($aux);
+                        $('#equipos').append('<option data="'+element.descripcion+' modelo '+element.modelo+'"'+"value='"+JSON.stringify($aux)+"'>"+element.descripcion+' modelo '+element.modelo+'</option>');
                     });
                     //$('#oculto').slideToggle('slow');
                     //$('#frm_add_new')[0].reset();
@@ -296,25 +297,32 @@
                 e.preventDefault();
                 console.log('vhjvjh');
                 console.log($(this).val());
-                /*for (let index = 0; index < $equipos.length; index++) {
-                    if($equipos[index].equipo==){
-
+                console.log(JSON.parse($(this).attr('data')));
+                console.log('lo que tiene el arreglo');
+                console.log($equipos);
+                let $indice=-1;
+                $equipoAborrar=JSON.parse($(this).attr('data'));
+                for (let index = 0; index < $equipos.length; index++) {
+                    if($equipos[index].equipo==$equipoAborrar.equipo_id){
+                        console.log('lo encontre index: '+index);
+                        $indice=index;
                     }
-                    
-                }*/
-                console.log(JSON.parse($(this).val()));
-                $indice=$equipos.indexOf(JSON.parse($(this).val()));
+                }
                 console.log($indice);
                if($indice>-1){
                 $equipos.splice($indice, 1);
+                console.log('arreglo');
+                console.log($equipos);
+                $(this).closest('tr').remove();
                }
-               $(this).closest('tr').remove();
                 //console.log($telefonosP);
             });
             $("#agregarEquipo").on("click", function(e){
                  e.preventDefault();
                 // console.log($("#servicio").val());
                 if($("#equipos").val()!='' && $("#cantidadE").val()!=''){
+                    console.log('safsaf');
+                    console.log(JSON.parse($("#equipos").val()));
                     $equipoJson=JSON.parse($("#equipos").val());
                     let $aux=new Object();
                     $aux.equipo=$equipoJson.equipo_id;
@@ -325,7 +333,7 @@
 
                     $("#equiposT").val(JSON.stringify($equipos));
                     console.log($("#equiposT").val());
-                   $('#tablaEquipos > tbody:last-child').append('<tr><td>'+$("#equipos").attr('data')+'</td>'+'<td>'+$("#cantidadE").val()+'</td>'+'<td><button type="button" class="btn btn-primary borrarEquipo"'+"value='"+JSON.stringify($aux)+"'data='"+$aux.equipo+"'"+'>'+'borrar'+'</button>'+'</td></tr>');
+                   $('#tablaEquipos > tbody:last-child').append('<tr><td>'+$equipoJson.descripcion+" modelo "+$equipoJson.modelo+'</td>'+'<td>'+$("#cantidadE").val()+'</td>'+'<td><button type="button" class="btn btn-primary borrarEquipo"'+"value='"+$equipoJson.equipo_id+"'data='"+$("#equipos").val()+"'"+'>'+'borrar'+'</button>'+'</td></tr>');
                 }
             });
             ////////////////////////////////////////////////////////
@@ -357,8 +365,11 @@
                     $('#materiales').html('<option value="">Escoger Material</option>');
                     if(data.Materiales){
                         data.Materiales.forEach(element => {
+                        var $aux=new Object();
+                        $aux.material_id=element.id;
+                        $aux.nombre=element.nombre;
                        // console.log(element);
-                        $('#materiales').append('<option data='+element.id+''+'value='+element.id+'>'+element.nombre+'</option>');
+                        $('#materiales').append('<option data="'+element.id+'"'+"value='"+JSON.stringify($aux)+"'>"+element.nombre+'</option>');
                         });
                     }
                     
@@ -371,7 +382,10 @@
                  e.preventDefault();
                 if($("#materiales").val()!='' && $("#cantidadOmetros").val()){
                     let $aux=new Object();
-                    $aux.material=$("#materiales").val();
+                    $materialJson=JSON.parse($("#materiales").val());
+                    console.log($materialJson);
+                    $aux.material=$materialJson.nombre;
+                    $aux.material_id=$materialJson.material_id;
                     console.log('aqui lo que tiene el box');
                     console.log($('optradio').val());
                     console.log($('input[name=optradio]:checked').val());
@@ -387,20 +401,26 @@
                     $("#materialesT").val(JSON.stringify($materiales));
                     console.log( $("#materialesT").val());
                     //console.log( $("#telefonos").val());
-                    $('#tablaMateriales > tbody:last-child').append('<tr><td>'+$aux.material+'</td>'+'<td>'+$aux.cantidad+'</td>'+'<td>'+$aux.metros+'</td>'+'<td><button type="button" class="btn btn-primary borrarEquipo" data='+$("#equipo").val()+'>'+'borrar'+'</button>'+'</td></tr>');
+                    $('#tablaMateriales > tbody:last-child').append('<tr><td>'+$aux.material+'</td>'+'<td>'+$aux.cantidad+'</td>'+'<td>'+$aux.metros+'</td>'+'<td><button type="button" class="btn btn-primary borrarMaterial" data='+$aux.material_id+'>'+'borrar'+'</button>'+'</td></tr>');
                 }
             });
-            $("#tablaMateriales").on("click",'.borrartablaMateriales',function(e){
+            $("#tablaMateriales").on("click",'.borrarMaterial',function(e){
                 e.preventDefault();
-                $indice=$servicios.indexOf($(this).attr('data'));
-                console.log($indice);
+                let $indice=-1;
+                $materialAborrar=JSON.parse($(this).attr('data'));
+                console.log($materialAborrar);
+                for (let index = 0; index < $materiales.length; index++) {
+                    if($materiales[index].material_id==$materialAborrar){
+                        console.log('lo encontre index: '+index);
+                        $indice=index;
+                    }
+                }
                if($indice>-1){
-                $servicios.splice($indice, 1);
-                $("#serviciosT").val($servicios);
+                $materiales.splice($indice, 1);
+                $("#materialesT").val($materiales);
+                $(this).closest('tr').remove();
+                console.log($materiales);
                }
-               $(this).closest('tr').remove();
-               console.log('borrado');
-                console.log($servicios);
             });
             ///////////////////////////////
 
