@@ -82,6 +82,8 @@ Route::group(['prefix' => 'Ordenes'], function () {
     Route::put('cerrarOrden/{id}','OrdenesController@cerrarOrden')->name('cerrar_Orden');
     Route::put('cancelarOrden/{id}','OrdenesController@cancelar')->name('cancelar_orden');
     Route::get('calcular/{id}','OrdenesController@calculoMonto')->name('calcularMonto_Orden');
+    Route::get('generarPdf/{id}','OrdenesController@generarPdf')->name('generarPdf_orden');
+    
 });
 Route::group(['prefix' => 'Actividades'], function () {
     Route::get('Ordenestable','ActividadesController@Ordenestable')->name('Actividades.Ordenestable');

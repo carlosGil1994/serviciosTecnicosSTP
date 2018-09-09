@@ -33,7 +33,7 @@
         <!-- Sidebar  -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h3>STP</h3>
+                    <img id="logo" src="{{asset('img/Captura.png')}}" alt="" width="200" height="70">
             </div>
             {{-- <button type="button" id="sidebarCollapse" class="btn btn-info">
                 <i class="fas fa-align-left"></i>

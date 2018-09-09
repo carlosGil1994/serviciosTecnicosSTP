@@ -10,6 +10,7 @@ use App\User;
 use App\PagoServicios;
 use App\Actividades;
 use Exception;
+use PDF;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 class OrdenesController extends Controller
@@ -33,6 +34,53 @@ class OrdenesController extends Controller
     public function create()
     {
         //
+    }
+
+    public function generarPdf($id){
+        $orden= Orden_servicios::findOrFail($id);
+        $orden['cliente']=$orden->propiedades->user;
+       // dd($orden['cliente']->name);
+        $orden['propiedad']=$orden->propiedades;
+        $actividades= $orden->actividades;
+        $aux=Carbon::now();
+        $date=[$aux->day,$aux->month,$aux->year];
+        $orden['fecha']=$date;
+        $suma=0;
+
+        foreach ($actividades as $act) {
+            $accion= Actividades::findOrFail($act->id)->accion->costo;
+            $equiposArray=[];
+            $materialesArray=[];
+            $equipos=Actividades::find($act->id)->equipos;
+            $materiales=Actividades::find($act->id)->materiales;
+            if($equipos){
+                foreach ($equipos as $equipo) {
+                    $equiposArray[]=$equipo;
+                    $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                }
+            }
+            if($materiales){
+                foreach ($materiales as $material) {
+                    $materialesArray[]=$material;
+                    if($material->pivot->cantidad){
+                        $suma = $suma +( $material->precio*$material->pivot->cantidad);    
+                    }
+                    if($material->pivot->metros){
+                        $suma = $suma +( $material->precio*$material->pivot->metros);
+                    }
+                }
+            }
+            $act['action']=Actividades::findOrFail($act->id)->accion;
+            $act['equipos']= $equiposArray;
+            $act['materiales']= $materialesArray;
+        }
+        $orden['subtotal']=$suma;
+        $orden['actividades']=$actividades;
+        
+       // dd($orden);
+        $data['orden']=$orden;
+        $pdf = PDF::loadView('generarPdf2', $data);
+        return $pdf->download('hdtuto.pdf');
     }
 
 
