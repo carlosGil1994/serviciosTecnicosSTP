@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePropiedadPorClientesTable extends Migration
+class CreateTlfnsClientesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreatePropiedadPorClientesTable extends Migration
      */
     public function up()
     {
-        Schema::create('propiedad_por_clientes', function (Blueprint $table) {
+        Schema::create('tlfns_cliente', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id');
-            $table->integer('propiedad_id');
+            $table->integer('cliente_id');
+            $table->string('numero');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreatePropiedadPorClientesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('propiedad_por_clientes');
+        Schema::dropIfExists('tlfns_cliente');
     }
 }

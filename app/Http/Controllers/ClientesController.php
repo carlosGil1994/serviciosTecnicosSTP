@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Propiedades;
+use App\Clientes;
 use App\User;
 use Exception;
+use DataTables;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class PropiedadesController extends Controller
+class ClientesController extends Controller
 {
+    const MODEL = 'Clientes';
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +19,11 @@ class PropiedadesController extends Controller
      */
     public function index()
     {
-        //
+        return view('Clientes')->with(array(
+            'mod' => self::MODEL,
+            'cantidad' => 0,
+            'header' => 'Clientes'
+        ));
     }
 
     /**
@@ -29,6 +35,15 @@ class PropiedadesController extends Controller
     {
         //
     }
+    public function clienteTable()
+    {
+        $cliente = Clientes::all();
+        return DataTables::of($cliente)
+        ->addColumn('action', function ($cliente) {
+            return '<a href="#edit-'.$cliente->id.'" data="'.$cliente->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i> Editar</a>';
+        })->make();
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -38,19 +53,24 @@ class PropiedadesController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-            'nombre'=> 'required|unique:propiedades',
-            'direccion'=>'required'
-        ];
+        $datos=[];
+        $datos['nombre']=$request->nombreP;
+        $datos['direccion']=$request->direccionP;
+        $datos['tipo']=$request->tipo;
+        $datos['telefonos']=json_decode($request->telefonosP, true);
+        $datos['usuarios']=json_decode($request->usuariosT, true);
+        
         try{
-            $validator = \Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json([
-                    'created' => false,
-                    'errors'  => $validator->errors()->all()
-                ]);
+         
+            $cliente = Clientes::create(['nombre'=>$datos['nombre'],'direccion'=> $datos['direccion'],'tipo'=>$datos['tipo']]);
+            if($datos['usuarios']!=null){
+                foreach ($datos['usuarios'] as $equipo) {
+                   // dd($equipo);
+                    $usuario=User::findOrFail($equipo['usuario_id']);
+                    $cliente->user()->where("cliente_id",$cliente->id)
+                    ->save($usuario);
+                }
             }
-            $propiead = User::findOrFail($request->user_id)->propiedades()->create($request->all());
             return response()->json(['create' => true], 200);
         } 
         catch(exeption $e){

@@ -15,7 +15,7 @@ class CreateOrdenServiciosTable extends Migration
     {
         Schema::create('orden_servicios', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('propiedad_id');
+            $table->integer('cliente_id');
             $table->timestamp('fecha_ini');
             $table->timestamp('fecha_fin')->nullable();
             $table->text('descripcion');

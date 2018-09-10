@@ -45,8 +45,11 @@ Route::group(['prefix' => 'Equipos'], function () {
 
 Route::group(['prefix' => 'Fallas'], function () {
     Route::get('index','FallasController@index')->name('Fallas_index');
+    Route::get('equiposFallas','FallasController@equiposFallas')->name('Fallas_equiposFallas');
     Route::get('show/{id}','FallasController@show')->name('show_Falla');
     Route::post('add_new','FallasController@store')->name('add_Falla');
+    Route::get('showFallas/{id}','FallasController@showFallas')->name('show_Fallas');
+    Route::get('fallaTable/{id}','FallasController@fallaTable')->name('fallaTable');
     Route::put('edit/{id}','FallasController@update')->name('update_Falla');
     Route::delete('delete/{id}','FallasController@destroy')->name('delete_Falla');
 });
@@ -59,6 +62,7 @@ Route::group(['prefix' => 'Materiales'], function () {
     Route::delete('delete/{id}','MaterialesController@destroy')->name('delete_Material');
 });
 Route::group(['prefix' => 'Usuarios'], function () {
+    Route::get('busqueda/{busqueda}','UsuariosController@busqueda')->name('Usuarios_busqueda');
     Route::get('index','UsuariosController@index')->name('Usuarios.index');
     Route::get('usertable','UsuariosController@usertable')->name('Usuarios.usertable');
     Route::get('show/{id}','UsuariosController@show')->name('show_Usuario');
@@ -66,12 +70,13 @@ Route::group(['prefix' => 'Usuarios'], function () {
     Route::put('edit/{id}','UsuariosController@update')->name('update_Usuario');
     Route::delete('delete/{id}','UsuariosController@destroy')->name('delete_Usuario');
 });
-Route::group(['prefix' => 'Propiedades'], function () {
-    Route::get('index','PropiedadesController@index')->name('Propiedades_index');
-    Route::get('show/{id}','PropiedadesController@show')->name('show_Propiedad');
-    Route::post('add_new','PropiedadesController@store')->name('add_Propiedad');
-    Route::put('edit/{id}','PropiedadesController@update')->name('update_Propiedad');
-    Route::delete('delete/{id}','PropiedadesController@destroy')->name('delete_Propiedad');
+Route::group(['prefix' => 'Clientes'], function () {
+    Route::get('index','ClientesController@index')->name('Clientes.index');
+    Route::get('clienteTable','ClientesController@clienteTable')->name('Clientes_table');
+    Route::get('show/{id}','ClientesController@show')->name('show_Clientes');
+    Route::post('add_new','ClientesController@store')->name('add_Clientes');
+    Route::put('edit/{id}','ClientesController@update')->name('update_Clientes');
+    Route::delete('delete/{id}','ClientesController@destroy')->name('delete_Clientes');
 });
 Route::group(['prefix' => 'Ordenes'], function () {
     Route::get('index','OrdenesController@index')->name('Ordenes_index');

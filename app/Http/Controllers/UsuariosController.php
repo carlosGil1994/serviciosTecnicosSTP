@@ -57,6 +57,13 @@ class UsuariosController extends Controller
     {
         //
     }
+    public function busqueda($busqueda){
+        $usuarios = User::where('tipo',4)->where('name','LIKE','%'.$busqueda.'%')
+        ->orWhere('apellido','LIKE','%'.$busqueda.'%')->get();
+        return response()->json([
+            'usuarios' => $usuarios
+        ],200);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -85,8 +92,6 @@ class UsuariosController extends Controller
                 'apellido'=> 'required',
                 'direccion'=>'required',
                 'email'=>'required',
-                'nombreP'=>'required',
-                'direccionP'=>'required',
             ];
             $validator = \Validator::make($request->all(), $rules);
             if ($validator->fails()) {
@@ -96,12 +101,12 @@ class UsuariosController extends Controller
                  ]);
             }
             try{
-                if(isset($request->telefonosP)){
+               /* if(isset($request->telefonosP)){
                     $telefonosP = explode(',', $request->telefonosP);
                     foreach ($telefonosP as $telefonoP) {
                         $telefonoParray[]['numero']=$telefonoP;
                     }
-                }
+                }*/
                 // se crea el usuario
                 $usuario=User::create(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password),'tipo'=>$request->tipo]);
                
@@ -109,10 +114,10 @@ class UsuariosController extends Controller
                     $usuario->telefonos()->createMany($telefonoarray);
                 }
                 // se crea la propiedad
-                $propiedad=$usuario->propiedades()->create(['nombre'=>$request->nombreP,'direccion'=>$request->direccionP]);
+               /* $propiedad=$usuario->propiedades()->create(['nombre'=>$request->nombreP,'direccion'=>$request->direccionP]);
                 if(isset($request->telefonosP)){
                     $propiedad->telefonos()->createMany($telefonoParray);
-                }
+                }*/
                 return response()->json(['create' => true], 200);
             }
             catch(Exeption $e){

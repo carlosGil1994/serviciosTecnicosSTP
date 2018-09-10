@@ -68,6 +68,7 @@ class ActividadesController extends Controller
             <a data="$actividad->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
 EOT;
         $output .=' <a data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        $output .=' <a href='."'".url("Fallas/showFallas")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>fallas</a>';
        // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             return $output;
         })->make();
@@ -84,9 +85,10 @@ EOT;
     {
         //aqi tiene que ser las ornenes asociadas a un tecnico en especifico
         $orders = Orden_servicios::all();
+       // dd($orders);
         foreach ($orders as $order) {
-            $order['cliente']=$order->propiedades->user->name;
-            $order['propiedad']=$order->propiedades->nombre;
+            $order['cliente']=$order->clientes->nombre;
+           // $order['propiedad']=$order->propiedades->nombre;
             $order['servicio']=$order->servicio->descripcion;
         }
         return DataTables::of($orders)

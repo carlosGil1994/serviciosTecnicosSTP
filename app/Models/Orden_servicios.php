@@ -8,11 +8,11 @@ class Orden_servicios extends Model
 {
     //
     protected $fillable = [
-        'propiedad_id','fecha_ini', 'fecha_fin','descripcion','estado', 'creador_id','cancelador_id','comentario','servicio_id','tecnico_id'
+        'cliente_id','fecha_ini', 'fecha_fin','descripcion','estado', 'creador_id','cancelador_id','comentario','servicio_id','tecnico_id'
     ];
 
-    public function propiedades(){
-       return $this->belongsTo('App\Propiedades','propiedad_id');
+    public function clientes(){
+       return $this->belongsTo('App\Clientes','cliente_id');
     }
 
     public function servicio(){

@@ -26,8 +26,8 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function propiedades(){
-        return $this->hasMany('App\Propiedades','user_id','id');
+    public function clientes(){
+        return $this->belongsToMany('App\Clientes','Usuario_por_clientes','user_id','cliente_id');
     }
 
     public function ordenCreador(){

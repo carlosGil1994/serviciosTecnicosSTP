@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Solicitudes extends Model
 {
     protected $fillable = [
-        'servicio_id','problema','propiedad_id'
+        'servicio_id','problema','cliente_id'
     ];
 
-    public function propiedad(){
-        return $this->belongsTo('App\Propiedades','propiedad_id','id');
+    public function clientes(){
+        return $this->belongsTo('App\Clientes','cliente_id','id');
     }
 
     public function servicio(){

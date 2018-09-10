@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Fallas;
 use App\Equipos;
 use App\Actividades;
+use DataTables;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -16,6 +17,7 @@ class FallasController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    const MODEL = 'Fallas';
     public function index()
     {
         try{
@@ -38,6 +40,35 @@ class FallasController extends Controller
     {
         
     }
+    public function equiposFallas($id){
+        Actividades::find($id)->equipos;
+        return response()->json([
+            'Equipos' => $equipos
+        ],200);
+    }
+
+    public function fallaTable($id){
+        $Fallas=Actividades::find($id)->fallas;
+      //  dd($mostrar['relations']['fallas']);
+        //$fallas=$mostrar->fallas;
+        //dd($mostrar);
+        return DataTables::of($Fallas)
+        ->addColumn('action', function ($Falla) {
+            return '<a href="#edit-'.$Falla->id.'" data="'.$Falla->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i> Editar</a>';
+        })->make();
+    }
+
+    public function showFallas($id){
+        $equipos=Actividades::find($id)->equipos;
+        //dd($equipos);
+        return view('actividadesFallas')->with(array(
+            'mod' => self::MODEL,
+            'cantidad' => 0,
+            'id'=>$id,
+            'header' => 'Fallas',
+            'equipos'=>$equipos
+        ));
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -47,6 +78,7 @@ class FallasController extends Controller
      */
     public function store(Request $request)
     {
+    
         //falta terminar
         $rules = [
             'descripcion'=> 'required'
@@ -62,6 +94,11 @@ class FallasController extends Controller
                     'errors'  => $validator->errors()->all()
                 ]);
             }
+           /* $datos=[];
+            $datos['descripcion']=$request->descrpcion;
+            $datos['causa']=$request->causa;
+            $datos['solucion']=$request->solucion;
+            $datos['equipo']=$request->equipos;*/
             // Si el validador pasa, almacenamos
             //Fallas::create($request->all());
             //$falla = new Fallas([$request->descripcion,$request->causa,$request->solucion]);
