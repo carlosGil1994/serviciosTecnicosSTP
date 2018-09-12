@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Actividades;
 use App\Acciones;
+use App\Servicios;
+use App\User;
 use App\Equipos;
 use App\Orden_servicios;
 use App\Materiales;
@@ -25,10 +27,14 @@ class ActividadesController extends Controller
      */
     public function index()
     {
+        $tecnicos= User::where('tipo',2)->get();
+        $servicios= Servicios::all();
         return view('Actividades')->with(array(
-            'mod' => self::MODEL,
+            'mod' => 'Ordenes',
             'cantidad' => 0,
-            'header' => 'Ordenes'
+            'header' => 'Ordenes',
+            'tecnicos'=> $tecnicos,
+            'servicios'=> $servicios
         ));
     }
 

@@ -92,20 +92,19 @@ class OrdenesController extends Controller
      */
     public function store(Request $request)
     {
-        $request->creador_id=Auth::id();
-        if($request->has('tecnico_id')){
-            $request->estado='asignado';
+        $fecha=new Carbon($request->fechaIni.' '.$request->timepicker1);
+        $cliente=json_decode($request->cliente, true);
+        
+        if($request->has('tecnico')){
+           $estado='asignado';
         }else{
-            $request->estado='sin asignar';
+            $estado='sin asignar';
         }
         try{ 
             $rules = [
-                'propiedad_id'=>'required|exists:propiedades,id',
-                'fecha_ini'=> 'required',
                 'descripcion'=>'required',
-                'fecha_ini'=> 'required',
-                'creador_id'=>'required|exists:users,id',
-                'servicio_id'=>'required|exists:servicios,id',
+                'fechaIni'=> 'required',
+                'servicio'=>'required|exists:servicios,id',
             ];
             $validator = \Validator::make($request->all(), $rules);
             if ($validator->fails()) {
@@ -114,7 +113,7 @@ class OrdenesController extends Controller
                     'errors'  => $validator->errors()->all()
                  ]);
             }
-            $orden= Orden_servicios::create(['propiedad_id'=>$request->propiedad_id,'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha_ini,'creador_id'=>$request->creador_id,'servicio_id'=>$request->servicio_id,'estado'=>$request->estado]);
+            $orden= Orden_servicios::create(['cliente_id'=>$cliente['cliente'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'creador_id'=>Auth::id(),'servicio_id'=>$request->servicio,'estado'=>$estado]);
            // $orden= Orden_servicios::create([$request->all()]);
            $orden->pagoServicio()->create(['estado'=>'no pagada']);
             return response()->json(['create' => true], 200);

@@ -18,14 +18,24 @@
                 <div class="row">
                     <div class="input-group input-daterange" id="datepicker">
                         <input type="text" class="input-sm form-control" name="start" />
-                        <div class="input-group-addon">
-                            <span class="glyphicon glyphicon-th"></span>
-                        </div>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                            </span>
+                            <div class="input-group-addon">
+                                    <span class="glyphicon glyphicon-th"></span>
+                                </div>
                         <div class="input-group-addon border">Hasta:</div>
                         <div class="input-group-addon">
                             <span class="glyphicon glyphicon-th"></span>
                         </div>
                         <input type="text" class="input-sm form-control" name="end" />
+                        <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="fa fa-calendar"></i>
+                                </button>
+                            </span>
                     </div>
                 </div>
             </div>    
@@ -43,70 +53,7 @@
     @component('componentes.paneladdnew')
         @slot('mod', $mod)
         @slot('inputs')
-        <div class="container">
-                        <br>
-                        <div class="form-group">
-                                <label for="search">Buscar Cliente</label>
-                                <div class="input-group">
-                                    <input type="search" id="search" name="search" class="form-control col-5" placeholder="Buscar" required>
-                                    <span class="input-group-btn">
-                                    <button type="submit" id="search_btn" class="btn btn-default">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                    </span>
-                                </div>
-                        </div>
-                        <div class="form-group">
-                                <div class="row">
-                                    <div class="col-5">
-                                        <select class="form-control" name="cliente" id="cliente">
-                                            <option value="">Escoger cliente</option>
-                                        </select>
-                                    </div>
-                                </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">Servicio</label>
-                            <select class="form-control" name="servicio" id="servicio">
-                                @foreach ($servicios as $servicio)
-                                    <option value={{$servicio->id}}>{{$servicio->descripcion}}</option>
-                                @endforeach   
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-group">
-                                <textarea name="descripcion" id="descripcion" cols="50" rows="5">descripción</textarea>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">Tecnico</label>
-                            <select class="form-control" name="tecnico" id="tecnico">
-                                @foreach ($tecnicos as $tecnico)
-                                    <option value={{$tecnico->id}}>{{$tecnico->name}}</option>
-                                @endforeach   
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <div class="row align-items-end">
-                                <div class="col">
-                                    <label for='fechaIni'>Fecha</label>
-                                    <div class="input-group date datepicker">
-                                        <input name='fechaIni' id='fechaIni' placeholder="fecha inicio" type="text" class="form-control">
-                                        <div class="input-group-addon">
-                                            <span class="glyphicon glyphicon-th"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="input-group bootstrap-timepicker timepicker">
-                                            <input id="timepicker1" name="timepicker1" type="text" class="form-control input-small">
-                                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                           
-                        </div>
-        </div>
+ 
             
         @endslot
     @endcomponent
@@ -116,9 +63,10 @@
         <thead class="thead-dark">
             <tr>
                 <th>Orden</th>
-                <th>Descripcion</th>
                 <th>Servicio</th>
                 <th>Cliente</th>
+                <th>Pago</th>
+                <th>Estado</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -213,13 +161,14 @@
                         }
                     }
                     ,
-                    ajax: "{{ url('Actividades/Ordenestable')}}",
+                    ajax: "{{ url('PagoServicios/PagoServiciosTable')}}",
                     type: 'GET',
                     columns: [
                         {data: 'id', name: 'id' },
-                        {data:'descripcion',name:'descripcion'},
+                        {data:'clientes.nombre', name:'clientes.nombre'},
                         {data:'servicio.descripcion', name:'servicio.descripcion'},
-                        {data:'cliente', name:'cliente'},
+                        {data:'pago_servicio.pago_total', name:'pagoServicio.pago_total'},
+                        {data:'pago_servicio.estado',name:'pago_servicio.estado'},
                         { data:'action', name: 'action', orderable: false, searchable: false }
                     ]   
                 });

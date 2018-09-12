@@ -44,6 +44,13 @@ class ClientesController extends Controller
         })->make();
     }
 
+    public function busqueda($busqueda){
+        $cliente = Clientes::where('nombre','LIKE','%'.$busqueda.'%')->get();
+        return response()->json([
+            'cliente' => $cliente
+        ],200);
+    }
+
 
     /**
      * Store a newly created resource in storage.

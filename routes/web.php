@@ -72,6 +72,7 @@ Route::group(['prefix' => 'Usuarios'], function () {
 });
 Route::group(['prefix' => 'Clientes'], function () {
     Route::get('index','ClientesController@index')->name('Clientes.index');
+    Route::get('busqueda/{busqueda}','ClientesController@busqueda')->name('busqueda_Clientes');
     Route::get('clienteTable','ClientesController@clienteTable')->name('Clientes_table');
     Route::get('show/{id}','ClientesController@show')->name('show_Clientes');
     Route::post('add_new','ClientesController@store')->name('add_Clientes');
@@ -109,6 +110,10 @@ Route::group(['prefix' => 'Especialidades'], function () {
     Route::delete('delete/{id}','EspecialidadesController@destroy')->name('delete_Especialidad');
     Route::put('quitarEspecialidad/{id}','EspecialidadesController@quitarEspecialidad')->name('quitar_Especialidad');
     
+});
+Route::group(['prefix' => 'PagoServicios'], function () {
+    Route::get('index','PagoServiciosController@index')->name('PagoServicios.index');
+    Route::get('PagoServiciosTable','PagoServiciosController@PagoTable')->name('PagoServicios_PagoServiciosTable');
 });
 
 // Rutas de test
