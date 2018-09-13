@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Comprobantes extends Model
 {
     protected $fillable = [
-        'pago_servicio_id','fecha_pago','pago_parcial','banco_id','num_recibo','estado','pago_tecnicos_id'
+        'pago_servicio_id','fecha_pago','pago_parcial','banco_id','num_recibo','estatus','pago_tecnicos_id'
     ];
 
     public function pagoSservicio(){

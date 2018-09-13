@@ -36,7 +36,10 @@ Route::group(['prefix' => 'Servicios'], function () {
 
 Route::group(['prefix' => 'Equipos'], function () {
     Route::get('busqueda/{busqueda}','EquiposController@busqueda')->name('Equipos_busqueda');
-    Route::get('index','EquiposController@index')->name('Equipos_index');
+    Route::get('index','EquiposController@index')->name('Equipos.index');
+    Route::get('fallas/{id}','EquiposController@fallas')->name('Equipos.fallas');
+    Route::get('fallasTable/{id}','EquiposController@fallasTable')->name('Equipos.fallasTable');
+    Route::get('equiposTable','EquiposController@equiposTable')->name('Equipos.equiposTable');
     Route::get('show/{id}','EquiposController@show')->name('show_Equipo');
     Route::post('add_new','EquiposController@store')->name('add_Equipo');
     Route::put('edit/{id}','EquiposController@update')->name('update_Equipo');
@@ -115,7 +118,12 @@ Route::group(['prefix' => 'PagoServicios'], function () {
     Route::get('index','PagoServiciosController@index')->name('PagoServicios.index');
     Route::get('PagoServiciosTable','PagoServiciosController@PagoTable')->name('PagoServicios_PagoServiciosTable');
 });
-
+Route::group(['prefix' => 'Comprobantes'], function () {
+    Route::post('add_new','ComprobantesController@store')->name('add_Comprobante');
+    Route::put('edit/{id}','ComprobantesController@update')->name('update_Comprobantes');
+    Route::get('index/{id}','ComprobantesController@index')->name('Comprobantes.index');
+    Route::get('ComprobantesTable/{id}','ComprobantesController@ComprobantesTable')->name('Comprobantes_ComprobantesTable');
+});
 // Rutas de test
 // Route::group(['prefix' => 'cargos'], function(){
 //     Route::get('/', 'CargoController@index')->name('cargos.index');

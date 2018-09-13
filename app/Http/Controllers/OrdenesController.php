@@ -38,9 +38,9 @@ class OrdenesController extends Controller
 
     public function generarPdf($id){
         $orden= Orden_servicios::findOrFail($id);
-        $orden['cliente']=$orden->propiedades->user;
+       // $orden['cliente']=$orden->propiedades->user;
        // dd($orden['cliente']->name);
-        $orden['propiedad']=$orden->propiedades;
+        $orden['cliente']=$orden->clientes;
         $actividades= $orden->actividades;
         $aux=Carbon::now();
         $date=[$aux->day,$aux->month,$aux->year];

@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
         'clientes*',
         'Ordenes*',
         'Actividades*',
-        'Especialidades*'
+        'Especialidades*',
+        'Comprobantes*'
     ];
 }

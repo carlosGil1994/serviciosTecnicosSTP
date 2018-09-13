@@ -65,6 +65,7 @@
                     <a href="{{ route('Actividades.index') }}">ordenes</a>
                     <a href="{{ route('Clientes.index') }}">Clientes</a>
                     <a href="{{ route('PagoServicios.index') }}">Pago servicios</a>
+                    <a href="{{ route('Equipos.index') }}">Equipos</a>
                 </li>
             </ul>
         </nav>

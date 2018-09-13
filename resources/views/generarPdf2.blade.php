@@ -119,7 +119,7 @@
                     <table width="100%" class="tabla2">
                         <tr>
                             <td width="11%">Cliente:</td>
-                            <td width="37%" class="linea"><span class="text">{{$orden['cliente']->name}} {{$orden['cliente']->apellido}}</span></td>
+                            <td width="37%" class="linea"><span class="text">{{$orden['cliente']->nombre}}</span></td>
                             <td width="5%">&nbsp;</td>
                             <td width="13%">&nbsp;</td>
                             <td width="4%">&nbsp;</td>
@@ -128,8 +128,8 @@
                             <td width="7%" align="center" class="border fondo"><strong>AÑO</strong></td>
                         </tr>
                         <tr>
-                            <td>Propiedad:</td>
-                            <td class="linea"><span class="text">{{$orden['propiedad']->nombre}}</span></td>
+                            <td>Tipo:</td>
+                            <td class="linea"><span class="text">{{$orden['cliente']->tipo}}</span></td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
@@ -181,7 +181,7 @@
                     <table border="0" cellpadding="0" cellspacing="0">
                         <tr>
                             <td align="center" class="cancelado">Observaciones</td>
-                            <td align="center" class="cancelado">Precio incluye I.V.A e Instalación</td>
+                            <td align="center" class="cancelado">Precio incluye I.V.A y Costo de la acción</td>
                         </tr>
                     </table>
         </main>

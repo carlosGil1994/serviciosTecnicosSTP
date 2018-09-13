@@ -13,7 +13,7 @@ class PagoServicios extends Model
     public function ordenServicio(){
         return $this->belongsTo('App\Orden_servicios','orden_servicio_id','id');
      }
-     public function compromabte(){
+     public function comprobante(){
          return $this->hasMany('App\Comprobantes','pago_servicio_id','id');
      }
 }

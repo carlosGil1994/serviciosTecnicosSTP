@@ -20,7 +20,6 @@ class PagoServiciosController extends Controller
             'cantidad' => 0,
             'header' => 'Pago de servicios'
         ));
-
     }
 
     public function PagoTable(){
@@ -31,7 +30,7 @@ class PagoServiciosController extends Controller
             <a data="$orden->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
 EOT;
        // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
-       // $output .=' <a href='."'".url("Fallas/showFallas")."/".$ordenes->id."'".'"data="'.$ordenes->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>fallas</a>';
+        $output .=' <a href='."'".url("Comprobantes/index")."/".$orden->pagoservicio->id."'".'"data="'.$orden->pagoservicio->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Comprobantes</a>';
        // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             return $output;
         })->make();

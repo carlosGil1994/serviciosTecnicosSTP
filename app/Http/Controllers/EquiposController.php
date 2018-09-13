@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Equipos;
 use Exception;
+use DataTables;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EquiposController extends Controller
@@ -16,7 +17,12 @@ class EquiposController extends Controller
      */
     public function index()
     {
-        try{
+        return view('equipos')->with(array(
+            'mod' => 'Equipos',
+            'cantidad' => 0,
+            'header' => 'Equipos'
+        ));
+        /*try{
             $Equipos=Equipos::all();
             return response()->json([
                 'Equipos' => $Equipos
@@ -24,9 +30,21 @@ class EquiposController extends Controller
         }
         catch(Exception $e){
             return response()->json(['found' => false], 404);
-        } 
+        } */
+    }
+    public function fallas($id){
+
+        return view('equiposFallas')->with(array(
+            'mod' => 'Equipos',
+            'cantidad' => 0,
+            'header' => 'Fallas en Equipos',
+            'id'=> $id
+        ));
     }
 
+    public function fallasTable(){
+        
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -35,6 +53,19 @@ class EquiposController extends Controller
     public function create()
     {
         //
+    }
+    public function equiposTable(){
+        $Equipos=Equipos::all();
+        return DataTables::of($Equipos)
+        ->addColumn('action', function ($Equipo) {
+            $output = <<<EOT
+            <a data="$Equipo->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
+EOT;
+       // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        $output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Fallas</a>';
+       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+            return $output;
+        })->make();
     }
     public function busqueda($busqueda)
     {
