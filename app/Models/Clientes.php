@@ -13,7 +13,7 @@ class Clientes extends Model
 
 
     public function user(){
-        return $this->belongsToMany('App\Clientes','Usuario_por_clientes','cliente_id','user_id');
+        return $this->belongsToMany('App\User','Usuario_por_clientes','cliente_id','user_id');
     }
 
     public function ordenServicio(){
@@ -25,6 +25,6 @@ class Clientes extends Model
     }
 
     public function telefonos(){
-        return $this->hasMany('App\Tlfns_clientes','cliente_id','id');
+        return $this->hasMany('App\Tlfns_cliente','cliente_id','id');
     }
 }

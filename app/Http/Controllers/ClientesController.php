@@ -7,6 +7,7 @@ use App\Clientes;
 use App\User;
 use Exception;
 use DataTables;
+use App\Tlfns_cliente;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClientesController extends Controller
@@ -22,7 +23,8 @@ class ClientesController extends Controller
         return view('Clientes')->with(array(
             'mod' => self::MODEL,
             'cantidad' => 0,
-            'header' => 'Clientes'
+            'header' => 'Clientes',
+            'mostrarBoton'=>true
         ));
     }
 
@@ -40,7 +42,7 @@ class ClientesController extends Controller
         $cliente = Clientes::all();
         return DataTables::of($cliente)
         ->addColumn('action', function ($cliente) {
-            return '<a href="#edit-'.$cliente->id.'" data="'.$cliente->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i> Editar</a>';
+            return '<a href="#edit-'.$cliente->id.'" data="'.$cliente->id.'" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
         })->make();
     }
 
@@ -60,11 +62,18 @@ class ClientesController extends Controller
      */
     public function store(Request $request)
     {
+        $telefonoarray=[];
+        if(isset($request->telefonosP)){
+            $telefonos = explode(',', $request->telefonos);
+            foreach ($telefonos as $telefono) {
+                $telefonoarray[]['numero']=$telefono;
+            }
+        }
         $datos=[];
         $datos['nombre']=$request->nombreP;
         $datos['direccion']=$request->direccionP;
         $datos['tipo']=$request->tipo;
-        $datos['telefonos']=json_decode($request->telefonosP, true);
+        $datos['telefonos']=$telefonoarray;
         $datos['usuarios']=json_decode($request->usuariosT, true);
         
         try{
@@ -77,6 +86,9 @@ class ClientesController extends Controller
                     $cliente->user()->where("cliente_id",$cliente->id)
                     ->save($usuario);
                 }
+            }
+            if(isset($request->telefonosP)){
+                $cliente->telefonos()->createMany($telefonoarray);
             }
             return response()->json(['create' => true], 200);
         } 
@@ -94,9 +106,9 @@ class ClientesController extends Controller
     public function show($id)
     {
         try{
-            $propuedad=Propiedades::findOrFail($id);
+            $cliente=clientes::with('telefonos','user')->where('id',$id)->first();
             return response()->json([
-                'Propiedad' => $propiedad
+                'cliente' => $cliente
             ],200);
         }
         catch(ModelNotFoundException $e){
@@ -124,20 +136,54 @@ class ClientesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules = [
-            'id'=>'required|exists:propiedades,id',
+       // dd('afsaf');
+       /* $rules = [
             'nombre'=> 'required',
             'direccion'=>'required'
         ];
-        try{
+      
             $validator = \Validator::make($request->all(), $rules);
             if ($validator->fails()) {
                 return response()->json([
                     'created' => false,
                     'errors'  => $validator->errors()->all()
                 ]);
-            }
-            $propiead = Propiedades::findOrFail($request->id)->update($request->all());
+            }*/
+            try{
+                $telefonoarray=[];
+                if(isset($request->telefonosP)){
+                    $telefonos = explode(',', $request->telefonosP);
+                    foreach ($telefonos as $telefono) {
+                        $telefonoarray[]['numero']=$telefono;
+                    }
+                }
+               // dd($telefonoarray);
+                $datos=[];
+                $datos['nombre']=$request->nombreP;
+                $datos['direccion']=$request->direccionP;
+                $datos['tipo']=$request->tipo;
+                $datos['telefonos']=$telefonoarray;
+                $datos['usuarios']=json_decode($request->usuariosT, true);
+                $cliente=Clientes::findOrFail($id);
+                $cliente->update(['nombre'=>$datos['nombre'],'direccion'=> $datos['direccion'],'tipo'=>$datos['tipo']]);
+                $cliente->user()->detach();
+                if($datos['usuarios']!=null){
+                   
+                    foreach ($datos['usuarios'] as $usuario) {
+                       // dd($equipo);
+                        $usuario=User::findOrFail($usuario['usuario_id']);
+                        $cliente->user()->where("cliente_id",$cliente->id)
+                        ->save($usuario);
+                    }
+                }
+                $telefonos = $cliente->telefonos;
+                        foreach ($telefonos as $key => $telefono) {
+                            $telefono->delete();
+                        }
+                if(isset($request->telefonosP)){
+                    
+                        $cliente->telefonos()->createMany($telefonoarray);
+                }
             return response()->json(['create' => true], 200);
         } 
         catch(exeption $e){

@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Orden_servicios;
 use App\Propiedades;
+use App\Cotizaciones;
 use App\User;
 use App\PagoServicios;
 use App\Actividades;
 use Exception;
+use DataTables;
 use PDF;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -34,6 +36,42 @@ class OrdenesController extends Controller
     public function create()
     {
         //
+    }
+    public function cotizaciones($id){
+        return view('Cotizaciones')->with(array(
+            'mod' => 'Ordenes',
+            'cantidad' => 0,
+            'header' => 'Cotizaciones',
+            'mostrarBoton'=>true,
+            'id'=> $id,
+        ));
+    }
+    public function cotizacionesTable($id){
+        $cotizaciones=Cotizaciones::where('orden_servicio_id',$id)->get();
+        return DataTables::of($cotizaciones)
+        ->addColumn('action', function ($cotizacion) {
+        $output =' <a href='."'".url("Ordenes/descargarPdf")."/".$cotizacion->id."'".'"data="'.$cotizacion->id.'" title="Descargar" class="btn btn-xs btn-primary "><i class="fas fa-download"></i></a>';
+        $output .=' <a href='."'".url("Ordenes/showCotizacion")."/".$cotizacion->id."'".'"data="'.$cotizacion->id.'" title="visualizar" target="_blank" class="btn btn-xs btn-primary "><i class="far fa-eye"></i></a>';
+       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';     
+       return $output;
+        })->make();
+    }
+
+    public function showCotizacion($id){
+        $cotizacion=Cotizaciones::find($id);
+        $url = $cotizacion->path;
+        if ( file_exists($url))
+         {
+        return response()->file($url);
+        }
+    }
+    public function descargarPdf($id){
+        $cotizacion=Cotizaciones::find($id);
+        $url = $cotizacion->path;
+        if ( file_exists($url))
+         {
+        return response()->download($url);
+        }
     }
 
     public function generarPdf($id){
@@ -79,8 +117,35 @@ class OrdenesController extends Controller
         
        // dd($orden);
         $data['orden']=$orden;
+        $fecha= Carbon::now();
+        $nombreArchivo = $orden['id'].'-'.$fecha->toDateString().' '.$fecha->hour.'-'.$fecha->minute.".pdf";
+        $path=storage_path('app/public/cotizaciones').'/'.$nombreArchivo;
+        
+      
         $pdf = PDF::loadView('generarPdf2', $data);
-        return $pdf->download('hdtuto.pdf');
+        $output = $pdf->output();
+        file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $output);
+        $cotizacion= Cotizaciones::create(['path'=>$path,'fecha_creacion'=>$fecha,'orden_servicio_id'=>$orden->id]);
+       // $cotizacion=Cotizaciones::find(1);
+        $url = $cotizacion->path;
+       // $cotizacion= Cotizaciones::create(['path'=>$path,'fecha_creacion'=>$fecha,'orden_servicio_id'=>$orden->id]);
+       // $url = storage_path('app/public/cotizaciones').'/'.$nombreArchivo;
+       // file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $output);
+       // return $pdf->stream();
+       // return "true";
+        return response()->file($url); //para devolver sin descargar 
+      /* $pdf = PDF::loadView('generarPdf2', $data);
+       $fecha= Carbon::now();
+       //dd($fecha->toDateString());
+        $nombreArchivo = $orden['id'].'-'.$fecha->toDateString().".pdf";
+
+//Guardalo en una variable
+$output = $pdf->output();
+file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $output);
+        //\Storage::disk('public')->put($nombreArchivo,  \File::get($output));
+        //dd($nombreArchivo);
+       // return $pdf->download('hdtuto.pdf');*/
+       //return $output;
     }
 
 
@@ -133,7 +198,9 @@ class OrdenesController extends Controller
     {
         //dd($date = Carbon::now());
         try{ 
-            $orden= Orden_servicios::with('propiedades','servicio','creador','tecnico','cancelador','actividades')->where('id',$id)->first();
+            $orden= Orden_servicios::with('clientes','servicio','creador','tecnico','cancelador','actividades')->where('id',$id)->first();
+            $aux=new Carbon($orden['fecha_ini']);
+            $orden['fecha_ini']= $aux->format('g:i A');
             return response()->json([
                 'orden' => $orden
             ],200);
@@ -167,12 +234,13 @@ class OrdenesController extends Controller
      */
     public function update(Request $request, $id)
     {
+       // dd($request);
+        $fecha=new Carbon($request->fechaIni.' '.$request->timepicker1);
+        $cliente=json_decode($request->cliente, true);
+        $estado='asignado';
         try{ 
-            $rules = [
-                'propiedad_id'=>'required|exists:propiedades,id',
-                'fecha_ini'=> 'required',
+          /*  $rules = [
                 'descripcion'=>'required',
-                'fecha_ini'=> 'required',
                 'servicio_id'=>'required|exists:servicios,id',
             ];
             $validator = \Validator::make($request->all(), $rules);
@@ -181,8 +249,17 @@ class OrdenesController extends Controller
                     'created' => false,
                     'errors'  => $validator->errors()->all()
                 ]);
+            }*/
+            $orden= Orden_servicios::findOrFail($id);
+            if($orden['estado']=="no asignado" && $request->has('tecnico')){
+                $estado='asignado';
             }
-            $orden= Orden_servicios::findOrFail($id)->update(['propiedad_id'=>$request->propiedad_id,'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha_ini,'servicio_id'=>$request->servicio_id,'estado'=>$request->estado]);
+            else{
+                if($request->estado){
+                    $estado=$request->estado;
+                }
+            }
+            $orden->update(['cliente_id'=>$cliente['id'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'servicio_id'=>$request->servicio,'estado'=>$estado]);
             return response()->json(['update' => true]);
         } 
         catch(ModelNotFoundException $e){
@@ -216,8 +293,8 @@ class OrdenesController extends Controller
     public function cerrarOrden($id){
         try {
             //debe ser con Auth::user() ala hora de estar en produccion
-           // $user=Auth::user(); 
-           $user=User::findOrfail(1);
+           $user=Auth::user(); 
+          // $user=User::findOrfail(1);
             if($user->tipo==2){
                 $suma=0;
                 /// es tecnico
@@ -226,14 +303,20 @@ class OrdenesController extends Controller
                 $orden->update(['cierre_tecnico'=> $user/*$user->id*/,'fecha_fin'=>Carbon::now()]);
                 $actividades= $orden->actividades;
                 //aqui se actualizara el precio del pago servicio si este es 0
+              //  dd($orden->pagoServicio->pago_total);
                 if($orden->pagoServicio->pago_total <= 0){
+                  //  dd($orden->pagoServicio->pago_total);
                     foreach ($actividades as $actividad) {
                         // monto de equipos
+                       // dd($actividad);
                         $accion= Actividades::findOrFail($actividad->id)->accion->costo;
+                        //dd($accion);
                         if($equipoActividades=Actividades::findOrFail($actividad->id)->equipos){
                              //aqui se debe iterar
+                             //dd($equipoActividades);
                             foreach ($equipoActividades as $equipo) {
                                 $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                                //dd($suma);
                             } 
                          }
                          //monto de materiales
@@ -256,6 +339,7 @@ class OrdenesController extends Controller
             if($user->tipo==3){
                 $orden= Orden::findOrFail($id)->update(['cierre_cliente'=> $user->id]);
             }
+            return response()->json(['update' => true], 200);
         }
         catch(ModelNotFoundException $e){
             return response()->json(['update' => false], 500);

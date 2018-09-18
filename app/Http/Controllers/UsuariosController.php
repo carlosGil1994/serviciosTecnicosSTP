@@ -32,10 +32,13 @@ class UsuariosController extends Controller
         catch(Exeption $e){
             return response()->json(['found' => false,"mensaje"=>$e->getMessage()], 404);
         }*/
+        $servicios=Servicios::all();
         return view('usuarios')->with(array(
             'mod' => self::MODEL,
             'cantidad' => 0,
-            'header' => 'Usuarios'
+            'header' => 'Usuarios',
+            'servicios'=> $servicios,
+            'mostrarBoton'=>true
         ));
     }
 
@@ -44,7 +47,7 @@ class UsuariosController extends Controller
         $users = User::all();
         return DataTables::of($users)
         ->addColumn('action', function ($user) {
-            return '<a href="#edit-'.$user->id.'" data="'.$user->id.'"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+            return '<a href="#edit-'.$user->id.'" data="'.$user->id.'" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
         })->make();
     }
 
@@ -171,7 +174,7 @@ class UsuariosController extends Controller
                 }
                 if(isset($request->serviciosT)){
                     foreach ($servicioarray as $key => $servicio) {
-                        $serv= Servicios::where('descripcion',$servicio)->first();
+                        $serv= Servicios::find(intval($servicio));
                         //dd( $serv);
                         $usuario->especialidades()->save($serv);
                     }
@@ -227,7 +230,7 @@ class UsuariosController extends Controller
         if(isset($request->serviciosT)){
             $servicios = explode(',', $request->serviciosT);
             foreach ($servicios as $servicio) {
-                $servicioarray[]['servicio']=$servicio;
+                $servicioarray[]['servicio']=intval($servicio);
             }
             //dd($servicioarray);
         }
@@ -289,6 +292,7 @@ class UsuariosController extends Controller
             }*/
             if($request->tipo == 2){
                // dd($servicioarray);
+              // dd($servicioarray);
                 $usuario=User::findOrFail($id);
                 $usuario->update(['name'=>$request->name,'apellido'=>$request->apellido,'direccion'=>$request->direccion,'email'=>$request->email,'password'=>Hash::make($request->password)]);
                 $telefonos = $usuario->telefonos;
@@ -309,7 +313,7 @@ class UsuariosController extends Controller
                 if(isset($request->serviciosT)){
                     foreach ($servicioarray as $servicio) {
                         //dd($servicio['servicio']);
-                        $serv= Servicios::where('descripcion',$servicio['servicio'])->first();
+                        $serv= Servicios::find($servicio['servicio']);
                         //dd( $serv);
                         $usuario->especialidades()->save($serv);
                     }

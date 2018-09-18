@@ -2,18 +2,24 @@
     <div class="dashbox panel panel-default">
         <div class="card-body">
             <div class="row">
-                    <div class="col">
-                        <h3>{{ $count }}</h3>
-                    </div>
-                    <div class="col">
+                    <div style='text-align: center' class="col offset-2">
                         <h3>{{ $header }}</h3>
                     </div>
-                    <div class="col">
-                        <button type="button" id="btn-add-new" class="btn btn-primary btn-lg">
-                            <i class="fa fa-plus"></i>
-                            Agregar nuevo
-                        </button>
+                    @if(Auth::user()->tipo!=4)
+                        @if($mostrarBoton)
+                            <div  class="col-2">
+                                <button type="button" id="btn-add-new" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                            @else
+                            <div  class="col-2">
+                            </div>
+                        @endif
+                    @else
+                    <div  class="col-2">
                     </div>
+                    @endif
             </div>
         </div>
     </div>

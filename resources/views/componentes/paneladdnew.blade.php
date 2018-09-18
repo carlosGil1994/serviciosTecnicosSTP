@@ -11,8 +11,7 @@
             {{csrf_field()}}
 
             {{ $inputs }}
-
-            <button class="btn btn-danger" id="send" >Agregar</button>
+            <button class="btn btn-danger float-right" id="send" >Guardar</button>
         </form>
     </div>
 </div>
@@ -23,6 +22,10 @@
     $(document).ready(function(){
       
         $('button#cerrar').click(function() {
+            $('#frm_add_new').trigger("reset");
+            $('#send').html('guardar');
+            $('#frm_add_new').attr('method',"POST");
+            $('#frm_add_new').attr('action',"{{ url($mod.'/add_new') }}");
             $('div#oculto').toggle('slow');
         });
 
@@ -42,7 +45,7 @@
                 console.log(data);
                 $('#oculto').slideToggle('slow');
                 showTable();
-                $('#frm_add_new')[0].reset();
+                $('#frm_add_new').trigger("reset");
             });
         });
 

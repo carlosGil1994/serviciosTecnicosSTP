@@ -4,6 +4,7 @@
     @component('componentes.addnew')
         @slot('header', $header)
         @slot('count', $cantidad)
+        @slot('mostrarBoton', $mostrarBoton)
     @endcomponent
     <br>
     <table id="table" class="table table-striped table-bordered"
@@ -52,7 +53,32 @@
                     processing: true,
                     serverSide: true,
                     destroy: true,
-                    ajax: "{{ route('bancos.show') }}",
+                    language: {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                    ,
+                    ajax: "{{ route('bancos.bancosTable') }}",
                     type: 'GET',
                     columns: [
                         { data: 'nombre', name: 'nombre' },
@@ -79,12 +105,20 @@
                         
                     }
                     else if($(this).hasClass('editar')){
-                        $('#oculto_edit').toggle('slow');
-                        $('div.head-edit').find('span.head').html('Editar Registro '+ $id);
-                        $('form#frm_edit').attr('data-id', $id);
-                        $('#cerrar_edit').click(function() {
-                            $('#oculto_edit').toggle('slow');
-                        });
+                        $id = $(this).attr('data');
+                        $.ajax({
+                            type:'GET',
+                            url: "{{url('Bancos/show')}}/"+$id,
+                            data: "&_token={{ csrf_token()}}",
+                            dataType: 'json',
+                            }).done((data)=>{
+                                $('#send').html('editar');
+                            $('#frm_add_new').attr('method',"PUT");
+                            $('#frm_add_new').attr('action',"{{url('Bancos/edit')}}/"+$id);
+                            $('#nombre').val(data.banco.nombre);
+                            $('#oculto').slideToggle('slow');
+                            });
+                      
                     }
                 });
             }

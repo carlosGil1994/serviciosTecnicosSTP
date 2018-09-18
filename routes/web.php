@@ -14,20 +14,31 @@
 Route::get('/', 'Auth\LoginController@showLoginForm');
 
 Auth::routes();
-
+Route::get('cerrarSecion', 'HomeController@cerrarSecion')->name('cerrarSecion');
 Route::get('/dashboard', 'HomeController@index')->name('home')->middleware('auth');
 
 Route::group(['prefix' => 'Bancos'], function () {
+    Route::get('show/{id}','BancoController@show')->name('show_Banco');
     Route::get('/', 'BancoController@index')->name('bancos.index');
     Route::get('/buscar','BancoController@store');
+    Route::get('/bancosTable','BancoController@bancosTable')->name('bancos.bancosTable');
     Route::post('/add_new', 'BancoController@create');
     Route::get('/get', 'BancoController@show')->name('bancos.show');
     Route::get('/delete_item', 'BancoController@destroy')->name('bancos.delete');
-    Route::post('/edit', 'BancoController@update');
+    Route::put('/edit/{id}', 'BancoController@update')->name('bancos.update');
+});
+Route::group(['prefix' => 'Acciones'], function () {
+    Route::get('index','AccionesController@index')->name('Acciones.index');
+    Route::get('AccionesTable','AccionesController@AccionesTable')->name('Acciones.AccionesTable');
+    Route::get('show/{id}','AccionesController@show')->name('show_Accion');
+    Route::post('add_new','AccionesController@store')->name('add_Accion');
+    Route::put('edit/{id}','AccionesController@update')->name('edit_Accion');
+    Route::delete('delete/{id}','AccionesController@destroy')->name('delete_Accion');
 });
 
 Route::group(['prefix' => 'Servicios'], function () {
-    Route::get('index','ServiciosController@index')->name('Servicios_index');
+    Route::get('index','ServiciosController@index')->name('Servicios.index');
+    Route::get('ServiciosTable','ServiciosController@ServiciosTable')->name('Servicios.ServiciosTable');
     Route::get('show/{id}','ServiciosController@show')->name('show_servicio');
     Route::post('add_new','ServiciosController@store')->name('add_servicio');
     Route::put('edit/{id}','ServiciosController@update')->name('edit_servicio');
@@ -58,7 +69,8 @@ Route::group(['prefix' => 'Fallas'], function () {
 });
 Route::group(['prefix' => 'Materiales'], function () {
     Route::get('busqueda/{busqueda}','MaterialesController@busqueda')->name('Materiales_busqueda');
-    Route::get('index','MaterialesController@index')->name('Materiales_index');
+    Route::get('index','MaterialesController@index')->name('Materiales.index');
+    Route::get('materialesTable','MaterialesController@materialesTable')->name('Materiales_materialesTable');
     Route::get('show/{id}','MaterialesController@show')->name('show_Material');
     Route::post('add_new','MaterialesController@store')->name('add_Material');
     Route::put('edit/{id}','MaterialesController@update')->name('update_Material');
@@ -91,6 +103,10 @@ Route::group(['prefix' => 'Ordenes'], function () {
     Route::put('cerrarOrden/{id}','OrdenesController@cerrarOrden')->name('cerrar_Orden');
     Route::put('cancelarOrden/{id}','OrdenesController@cancelar')->name('cancelar_orden');
     Route::get('calcular/{id}','OrdenesController@calculoMonto')->name('calcularMonto_Orden');
+    Route::get('Cotizaciones/{id}','OrdenesController@cotizaciones')->name('cotizaciones_orden');
+    Route::get('cotizacionesTable/{id}','OrdenesController@cotizacionesTable')->name('cotizacionesTable_orden');
+    Route::get('showCotizacion/{id}','OrdenesController@showCotizacion')->name('showCotizacion_orden');
+    Route::get('descargarPdf/{id}','OrdenesController@descargarPdf')->name('descargarPdf_cotizacion');
     Route::get('generarPdf/{id}','OrdenesController@generarPdf')->name('generarPdf_orden');
     
 });
@@ -116,6 +132,7 @@ Route::group(['prefix' => 'Especialidades'], function () {
 });
 Route::group(['prefix' => 'PagoServicios'], function () {
     Route::get('index','PagoServiciosController@index')->name('PagoServicios.index');
+    Route::put('comprobar/{id}','PagoServiciosController@comprobar')->name('PagoServicios.comprobar');
     Route::get('PagoServiciosTable','PagoServiciosController@PagoTable')->name('PagoServicios_PagoServiciosTable');
 });
 Route::group(['prefix' => 'Comprobantes'], function () {

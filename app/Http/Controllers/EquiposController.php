@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Equipos;
 use Exception;
 use DataTables;
@@ -17,10 +18,15 @@ class EquiposController extends Controller
      */
     public function index()
     {
+        $mostrarBoton=true;
+        if(Auth::user()->tipo==2){
+            $mostrarBoton=false;
+        }
         return view('equipos')->with(array(
             'mod' => 'Equipos',
             'cantidad' => 0,
-            'header' => 'Equipos'
+            'header' => 'Equipos',
+            'mostrarBoton'=>$mostrarBoton
         ));
         /*try{
             $Equipos=Equipos::all();
@@ -38,12 +44,29 @@ class EquiposController extends Controller
             'mod' => 'Equipos',
             'cantidad' => 0,
             'header' => 'Fallas en Equipos',
-            'id'=> $id
+            'id'=> $id,
+            'mostrarBoton'=>false
         ));
     }
 
-    public function fallasTable(){
-        
+    public function fallasTable($id){
+        $equipo=Equipos::find($id);
+        $fallas=$equipo->fallas;
+        foreach ($fallas as $falla) {
+            $falla['equipo']=$equipo->descripcion.' '.$equipo->modelo;
+        }
+       
+        return DataTables::of($fallas)
+       /* ->addColumn('action', function ($falla) {
+            $output = <<<EOT
+            <a data="$Equipo->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
+EOT;
+       // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        $output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Fallas</a>';
+       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+            return $output;
+        })*/
+        ->make();
     }
     /**
      * Show the form for creating a new resource.
@@ -55,14 +78,25 @@ class EquiposController extends Controller
         //
     }
     public function equiposTable(){
-        $Equipos=Equipos::all();
+        if(Auth::user()->tipo==2){
+            $Equipos=Equipos::all();
+            foreach ($Equipos as $equipo) {
+                $equipo['precio']='';
+            }
+        }
+        else{
+            $Equipos=Equipos::all();
+        }
         return DataTables::of($Equipos)
         ->addColumn('action', function ($Equipo) {
+            $output='';
+            if(Auth::user()->tipo!=2 && Auth::user()->tipo!=3 ){
             $output = <<<EOT
-            <a data="$Equipo->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
+            <a href="#" data="$Equipo->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
 EOT;
+            }
        // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
-        $output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Fallas</a>';
+        $output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'" title="Fallas" class="btn btn-xs btn-primary "><i class="fas fa-exclamation-triangle"></i></a>';
        // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             return $output;
         })->make();
@@ -120,7 +154,7 @@ EOT;
         try{
             $Equipo=Equipos::findOrFail($id);
             return response()->json([
-                'Equipos' => $Equipo
+                'equipo' => $Equipo
             ],200);
         }
         catch(ModelNotFoundException $e){

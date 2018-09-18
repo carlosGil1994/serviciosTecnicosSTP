@@ -1,10 +1,21 @@
 @extends('layouts.menu')
-
 @section('contenido')
-    @component('componentes.addnew')
-        @slot('header', $header)
-        @slot('count', $cantidad)
-    @endcomponent
+<div class="card">
+        <div class="dashbox panel panel-default">
+            <div class="card-body">
+                <div class="row">
+                        <div style='text-align: center' class="col offset-2">
+                            <h3>{{ $header }}</h3>
+                        </div>
+                                <div  class="col-2">
+                                    <button type="button" id="btn-add-new" class="btn btn-primary btn-lg">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <br>
 
     {{--Componente de la barra de busqueda--}}
@@ -69,6 +80,31 @@
                     processing: true,
                     serverSide: true,
                     destroy: true,
+                    language: {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                    ,
                     ajax: "{{ url('Comprobantes/ComprobantesTable')}}"+"/"+"{{$id}}",
                     type: 'GET',
                     columns: [
@@ -80,6 +116,12 @@
                 });
         }
         $(document).ready(function(){
+            $('#btn-add-new').click(function() {
+           // $('#send').html('editar');
+           // $('#frm_add_new').attr('action','{{ url('Servicios/index')}}');
+            $('div#oculto').toggle('slow');
+            $('div.content-search').html('');
+        });
             $telefonos=[];
             $telefonosP=[];
             $usuarios=[];

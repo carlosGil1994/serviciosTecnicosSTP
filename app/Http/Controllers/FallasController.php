@@ -49,7 +49,11 @@ class FallasController extends Controller
 
     public function fallaTable($id){
         $Fallas=Actividades::find($id)->fallas;
-      //  dd($mostrar['relations']['fallas']);
+        foreach ($Fallas as $falla) {
+            $equipo=Equipos::find($falla->equipo_id);
+            $falla['equipo']=$equipo->descripcion.' '.$equipo->modelo;
+        }
+              //  dd($mostrar['relations']['fallas']);
         //$fallas=$mostrar->fallas;
         //dd($mostrar);
         return DataTables::of($Fallas)
@@ -66,7 +70,8 @@ class FallasController extends Controller
             'cantidad' => 0,
             'id'=>$id,
             'header' => 'Fallas',
-            'equipos'=>$equipos
+            'equipos'=>$equipos,
+            'mostrarBoton'=>true
         ));
     }
 
@@ -110,9 +115,10 @@ class FallasController extends Controller
            ]);*/
            $fallas = new Fallas;
            ////// forma de guradar anidadamente cunado es many to many teniendo columnas adicionales en la tablla de union////////
-           $fallas->create(["descripcion"=>$request->descripcion,"causa"=>$request->causa,"solucion"=>$request->solucion])
-           ->equipos()->where("falla_id",$fallas->id)
-           ->save($Equipo,["actividad_id"=>$request->actividad]);
+           $fallas->create(["descripcion"=>$request->descripcion,"causa"=>$request->causa,"solucion"=>$request->solucion,'equipo_id'=>$request->equipo])
+           ->actividades()->attach($request->actividad);
+           /*->equipos()->where("falla_id",$fallas->id)
+           ->save($Equipo,["actividad_id"=>$request->actividad]);*/
            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
           // dd( $Equipo);
            //dd( $falla=Fallas::findOrFail(5)->pivot->actividad_id);
@@ -201,6 +207,7 @@ class FallasController extends Controller
     {
         try{
             $Falla=Fallas::findOrFail($id);
+            $Falla->actividades()->detach();
             $Falla->delete();
             return response()->json(['delete' => true]);
         } 

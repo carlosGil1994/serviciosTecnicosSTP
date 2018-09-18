@@ -15,10 +15,8 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>Nombre</th>
-                <th>Direccion</th>
-                <th>Tipo</th>
-                <th>action</th>
+                <th>Descripción</th>
+                <th>Acción</th>
             </tr>
         </thead>
 
@@ -30,103 +28,11 @@
         @slot('mod', $mod)
         @slot('inputs')
         <div class="container">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#home">Datos principales</a>
-                    </li>
-                    <li id='propId' class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#menu1">Usuarios</a>
-                    </li>
-                    <li id='especialidadId' class="nav-item" style="display:none">
-                        <a class="nav-link" data-toggle="tab" href="#menu3">Fallas</a>
-                    </li>
-                </ul>
-                <br>
-                <div class="tab-content">
-                    <div id='home' class="container tab-pane active">
-                        <div class="form-group">
-                            <label for="nombre">Nombre</label>
-                            <input type="text" class="form-control" id="nombreP" name="nombreP" placeholder="Nombre deL bien">
-                        </div>
-                        <div class="form-group">
-                                <label for="tipo">Tipo</label>
-                                <select class="form-control" name="tipo" id="tipo">
-                                        <option value='Residencial'>Residencial</option>
-                                        <option value='Empresa'>Comercio</option>
-                                        <option value='Industrial'>Industrial</option>
-                                    </select>
-                            </div>
-                        <div class="form-group">
-                            <textarea name="direccionP" id="direccionP" cols="50" rows="5">Direccion</textarea>
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col">
-                                    <input type="text" class="form-control" id="telefonoP" name="telefonoP" placeholder="agregar telefono del bien">
-                                </div>
-                                <div class="col">
-                                    <button class=" btn btn-danger" id="agregarTlfnP" name="agregarTlfnP">Agregar</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <table id="tablaTelefonosP" class="table">
-                                <thead class="">
-                                    <tr>
-                                        <th>Telefono</th>
-                                        <th>borrar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                            <input id="telefonosP" name="telefonosP" type="hidden">  
-                        </div>
-                        
-                    </div>
-                    <div id='menu1' class="container tab-pane fade">
-                            <div class="form-group">
-                                    <label for="search">Buscar usuario</label>
-                                    <div class="input-group">
-                                        <input type="search" id="search" name="search" class="form-control col-5" placeholder="Buscar" required>
-                                        <span class="input-group-btn">
-                                        <button type="submit" id="search_btn" class="btn btn-default">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                        </span>
-                                    </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-5">
-                                        <select class="form-control" name="usuario" id="usuario">
-                                            <option value="">Escoger usuario</option>
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <button class=" btn btn-danger" id="agregarUsuario" name="agregarUsuario">Agregar</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="form-group">
-                                    <table id="tablaUsuarios" name="tablaUsuarios" class="table">
-                                        <thead class="">
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Apellido</th>
-                                                <th>Borrar</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>  
-                                </div>
-                                <input id="usuariosT" name="usuariosT" type="hidden">
-                            </div>
-                    </div>
-                </div>
-            </div>
+            <div class="form-group">
+                <label for="pago">Descripcion</label>
+                <input type="text" id="descripcion" name="descripcion" class="form-control col-5" placeholder="Descripcion" required>
+            </div>  
+        </div>
             
         @endslot
     @endcomponent
@@ -144,7 +50,6 @@
         @endslot
     @endcomponent--}}
     <script>
-          $telefonosP=[];
         function showTable(){
                 $('#table').DataTable({
                     processing: true,
@@ -175,19 +80,17 @@
                         }
                     }
                     ,
-                    ajax: "{{ url('Clientes/clienteTable')}}",
+                    ajax: "{{ url('Servicios/ServiciosTable')}}",
                     type: 'GET',
                     columns: [
-                        {data: 'nombre', name: 'nombre' },
-                        {data:'direccion',name:'direccion'},
-                        {data:'tipo',name:'tipo'},
+                        {data:'descripcion',name:'descripcion'},
                         { data: 'action', name: 'action', orderable: false, searchable: false }
                     ]   
                 });
         }
         $(document).ready(function(){
             $telefonos=[];
-          
+            $telefonosP=[];
             $usuarios=[];
 
              function bindButtons(){
@@ -213,48 +116,16 @@
                        }
                          if($(this).hasClass('editar')){
                             $.ajax({
-                                url: "{{url('Clientes/show')}}/"+$id,
+                                url: "{{url('Servicios/show')}}/"+$id,
                                 data: "&_token={{ csrf_token()}}",
                                 type:'GET',
                                 dataType: 'json',
                             }).done(function(data){
                                 $('#send').html('editar');
                                 $('#frm_add_new').attr('method',"PUT");
-                                $('#frm_add_new').attr('action',"{{url('Clientes/edit')}}/"+$id);
-                                console.log(data.cliente);
-                                $('#nombreP').val(data.cliente.nombre);
-                                console.log(data.cliente.nombre);
-                                $('#tipo').val(data.cliente.tipo);
-                                $('#direccionP').val(data.cliente.direccion);
-                                if( data.cliente.telefonos.length >0){
-                             
-                               // $telefonos=JSON.stringify(data.usuarios.telefonos);
-                               // console.log( $telefonosp);
-                               // $("#telefonos").val($telefonos);
-                                console.log('esto es lo que le estamos colocando a telefonos');
-                                $tele=$("#telefonosP").val();
-                                data.cliente.telefonos.forEach(element=>{
-                                    console.log(element);
-                                    $telefonosP.push(element.numero);
-                                    $('#tablaTelefonosP > tbody:last-child').append('<tr><td>'+element.numero+'</td><td>'+'<button type="button" class="btn btn-primary borrarTelefonoP" data='+element.numero+'>'+'borrar'+'</button>'+'</td></tr>');
-                                });
-                                $("#telefonosP").val($telefonosP);
-                            }
-                            if(data.cliente.user){
-                                    $usuarios=[];
-                                    data.cliente.user.forEach(element=>{
-                                        let $aux=new Object();
-                                        $aux.usuario_id=element.id;
-                                        $aux.name=element.name;
-                                        $aux.apellido=element.apellido;
-                                        $usuarios.push($aux);
-                                        $('#tablaUsuarios > tbody:last-child').append('<tr><td>'+$aux.name+'</td>'+'<td>'+$aux.apellido+'</td>'+'<td><button type="button" class="btn btn-primary borrarusuario" data='+$aux.usuario_id+'>'+'borrar'+'</button>'+'</td></tr>');
-                                    });
-                                    $("#usuariosT").val(JSON.stringify($usuarios));
-                            }
-                               
-                        $('#oculto').slideToggle('slow');
-                        //$('#frm_add_new')[0].reset();
+                                $('#frm_add_new').attr('action',"{{url('Servicios/edit')}}/"+$id);
+                                $('#descripcion').val(data.servicio.descripcion);
+                                $('#oculto').slideToggle('slow');
                             });
                            
                         }

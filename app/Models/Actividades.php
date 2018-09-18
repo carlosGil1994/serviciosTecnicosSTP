@@ -27,6 +27,6 @@ class Actividades extends Model
     }
 
     public function fallas(){
-        return $this->belongsToMany('App\Fallas','fallas_por_equipos','actividad_id','falla_id')->withPivot('equipo_id');
+        return $this->belongsToMany('App\Fallas','falla_por_actividades','actividad_id','falla_id');
     }
 }

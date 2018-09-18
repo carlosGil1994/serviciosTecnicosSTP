@@ -17,19 +17,24 @@ class ServiciosController extends Controller
      */
     public function index()
     {
-        /*try{
-            $servicios=Servicios::all();
-            return response()->json([
-                'servicios' => $servicios
-            ],200);
-        }
-        catch(Exception $e){
-            return response()->json(['found' => false], 404);
-        } */
-        $users = User::all();
-        return DataTables::of($users)
-        ->addColumn('action', function ($user) {
-            return '<a href="#edit-'.$user->id.'" class="btn btn-xs btn-primary"><i class="glyphicon glyphicon-edit"></i> Edit</a>';
+        return view('Servicios')->with(array(
+            'mod' => 'Servicios',
+            'cantidad' => 0,
+            'header' => 'Servicios',
+            'mostrarBoton'=>true
+        ));
+    }
+    public function ServiciosTable(){
+        $Servicios=Servicios::all();
+        return DataTables::of($Servicios)
+        ->addColumn('action', function ($Servicio) {
+            $output = <<<EOT
+            <a href="#" data="$Servicio->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
+EOT;
+       // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        //$output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Fallas</a>';
+       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+            return $output;
         })->make();
     }
 

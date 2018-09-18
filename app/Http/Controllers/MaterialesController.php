@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Materiales;
+use Illuminate\Support\Facades\Auth;
 use Exception;
+use  DataTables;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MaterialesController extends Controller
@@ -16,7 +18,17 @@ class MaterialesController extends Controller
      */
     public function index()
     {
-        try{
+        $mostrarBoton=true;
+        if(Auth::user()->tipo==2){
+            $mostrarBoton=false;
+        }
+        return view('Materiales')->with(array(
+            'mod' => 'Materiales',
+            'cantidad' => 0,
+            'header' => 'Materiales',
+            'mostrarBoton'=>$mostrarBoton
+        ));
+        /*try{
             $Materiales=Materiales::all();
             return response()->json([
                 'Materiales' => $Materiales
@@ -24,7 +36,32 @@ class MaterialesController extends Controller
         }
         catch(Exception $e){
             return response()->json(['found' => false], 404);
-        } 
+        } */
+    }
+    public function materialesTable(){
+        if(Auth::user()->tipo==2){
+            $Materiales=Materiales::all();
+            foreach ($Materiales as $Material) {
+                $Material['precio']='';
+            }
+        }
+        else{
+            $Materiales=Materiales::all();
+        }
+      
+        return DataTables::of($Materiales)
+        ->addColumn('action', function ($Material) {
+            $output='';
+            if(Auth::user()->tipo!=2 && Auth::user()->tipo!=3){
+            $output = <<<EOT
+            <a href="#" data="$Material->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
+EOT;
+            }
+       // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        //$output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Fallas</a>';
+       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+            return $output;
+        })->make();
     }
 
     public function busqueda($busqueda)
@@ -74,7 +111,7 @@ class MaterialesController extends Controller
         } catch (Exception $e) {
             // Si algo sale mal devolvemos un error.
             //\Log::info('Error creating user: '.$e);//esto es para hacer un log
-            return response()->json(['created' => false], 500);
+            return response()->json(['created' => false,"mensaje"=>$e->getMessage()], 500);
         }
     }
 

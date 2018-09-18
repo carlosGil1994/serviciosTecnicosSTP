@@ -24,7 +24,8 @@ class ComprobantesController extends Controller
             'cantidad' => 0,
             'header' => 'Comprobantes',
             'id'=>$id,
-            'bancos'=>$bancos
+            'bancos'=>$bancos,
+            'mostrarBoton'=>true
         ));
     }
 

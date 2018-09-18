@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Acciones;
+use DataTables;
 
 class AccionesController extends Controller
 {
@@ -14,7 +15,22 @@ class AccionesController extends Controller
      */
     public function index()
     {
-        return Acciones::all();
+        return view('Acciones')->with(array(
+            'mod' => 'Acciones',
+            'cantidad' => 0,
+            'header' => 'Acciones',
+            'mostrarBoton'=>true,
+        ));
+    }
+    public function AccionesTable(){
+        $Acciones=Acciones::all();
+        return DataTables::of($Acciones)
+        ->addColumn('action', function ($Accion) {
+            $output = <<<EOT
+            <a href="#" data="$Accion->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
+EOT;
+       return $output;
+        })->make();
     }
 
     /**
@@ -35,6 +51,7 @@ class AccionesController extends Controller
      */
     public function store(Request $request)
     {
+       // dd($request);
         $rules = [
             'nombre'=> 'required|unique:acciones',
             'costo'=>'required'
@@ -47,7 +64,7 @@ class AccionesController extends Controller
                     'errors'  => $validator->errors()->all()
                 ]);
             }
-            $accion= Acciones::create([$request->all()]);
+            $accion= Acciones::create(['nombre'=>$request->nombre,'costo'=>$request->costo]);
             return response()->json(['create' => true], 200);
         }
         catch(Exeption $e){
@@ -66,7 +83,7 @@ class AccionesController extends Controller
         try{
             $accion=Acciones::findOrFail($id);
             return response()->json([
-                'Acciones' => $accion
+                'Accion' => $accion
             ],200);
         }
         catch(ModelNotFoundException $e){
@@ -95,7 +112,7 @@ class AccionesController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'nombre'=> 'required|unique:acciones',
+            'nombre'=> 'required',
             'costo'=>'required'
         ];
             $validator = \Validator::make($request->all(), $rules);

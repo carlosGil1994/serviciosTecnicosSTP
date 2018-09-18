@@ -4,6 +4,7 @@
     @component('componentes.addnew')
         @slot('header', $header)
         @slot('count', $cantidad)
+        @slot('mostrarBoton', $mostrarBoton)
     @endcomponent
     <br>
 
@@ -17,12 +18,12 @@
                  <div class="form-group">
                 <div class="row">
                     <div class="input-group input-daterange" id="datepicker">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fa fa-calendar"></i>
+                            </button>
+                        </span>
                         <input type="text" class="input-sm form-control" name="start" />
-                            <span class="input-group-btn">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fa fa-calendar"></i>
-                                </button>
-                            </span>
                             <div class="input-group-addon">
                                     <span class="glyphicon glyphicon-th"></span>
                                 </div>
@@ -58,22 +59,24 @@
         @endslot
     @endcomponent
     <br>
-    <table id="table" class="table table-striped table-bordered"
-    width="100%" role="grid" style="width: 100%;">
-        <thead class="thead-dark">
-            <tr>
-                <th>Orden</th>
-                <th>Servicio</th>
-                <th>Cliente</th>
-                <th>Pago</th>
-                <th>Estado</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table id="table" class="table table-striped table-bordered"
+        width="100%" role="grid" style="width: 100%;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Orden</th>
+                    <th>Cliente</th>
+                    <th>Servicio</th>
+                    <th>Descripción</th>
+                    <th>Pago</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
     {{--Componente para el view del panel--}}
     @component('componentes.panelview')
@@ -165,14 +168,26 @@
                     type: 'GET',
                     columns: [
                         {data: 'id', name: 'id' },
-                        {data:'clientes.nombre', name:'clientes.nombre'},
+                        {data:'cliente', name:'cliente'},
                         {data:'servicio.descripcion', name:'servicio.descripcion'},
-                        {data:'pago_servicio.pago_total', name:'pagoServicio.pago_total'},
+                        {data:'descripcion', name:'descripcion'},
+                        {data:'pago_total', name:'pago_total'},
                         {data:'pago_servicio.estado',name:'pago_servicio.estado'},
                         { data:'action', name: 'action', orderable: false, searchable: false }
                     ]   
                 });
             }
+            $("#table").on("click",'.comprobar',function(e){
+                $id = $(this).attr('data');
+                $.ajax({
+                        url: "{{url('PagoServicios/comprobar')}}/"+$id,
+                        type:'PUT',
+                        data: "&_token={{ csrf_token()}}",
+                        dataType: 'json',
+                    }).done(function(data){
+                        alert('Se ha comprobado el pago del servicio');
+                    });
+            });
             showTable();
         });
        

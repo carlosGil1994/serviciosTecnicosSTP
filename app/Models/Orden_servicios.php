@@ -40,5 +40,9 @@ class Orden_servicios extends Model
     public function pagoTecnico(){
         return $this->hasMany('App\PagoTecnicos','orden_servicio_id','id');
     }
+    public function cotizaciones(){
+        return $this->hasMany('App\Cotizaciones','orden_servicio_id','id');
+    }
+
 
 }

@@ -9,7 +9,7 @@
             @endif
             <div class="card">
                 <div class="card-header text-center">
-                    Puto Carlos
+                        <img id="logo" src="{{asset('img/Captura.png')}}" alt="" width="200" height="70">
                 </div>
 
                 <div class="card-body">

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Orden_servicios;
+use App\User;
+use App\PagoServicios;
+use Illuminate\Support\Facades\Auth;
 use DataTables;
 
 class PagoServiciosController extends Controller
@@ -18,23 +21,62 @@ class PagoServiciosController extends Controller
         return view('PagoServicios')->with(array(
             'mod' => 'Ordenes',
             'cantidad' => 0,
-            'header' => 'Pago de servicios'
+            'header' => 'Pago de servicios',
+            'mostrarBoton'=>false
         ));
     }
 
     public function PagoTable(){
-        $ordenes= Orden_servicios::with('clientes','pagoServicio','servicio')->get();
+        if(Auth::user()->tipo==4){
+            $ordenes=[];
+            $ordenesPorClientes=User::with('clientes.ordenServicio','clientes.ordenServicio.servicio','clientes.ordenServicio.pagoServicio')->where('id',Auth::id())->first();
+           
+           // dd($ordenesPorClientes);
+            foreach ($ordenesPorClientes->clientes as $cliente) {
+                // dd($cliente);
+                 foreach ($cliente['ordenServicio'] as $order) {
+                     $order['cliente']=$cliente->nombre;
+                     $order['servicio']=$order->servicio->descripcion;
+                     $order['pago_total']=$order->pagoServicio->pago_total;
+                     $ordenes[]= $order;
+                 }
+             }
+        }else{
+            $ordenesAux= Orden_servicios::with('clientes.user','pagoServicio','servicio')->get();
+            foreach ($ordenesAux as $orden) {
+                // dd($cliente);
+                $orden['cliente']=$orden->clientes->nombre;
+                $orden['servicio']=$orden->servicio->descripcion;
+                $orden['pago_total']=$orden->pagoServicio->pago_total;
+                $ordenes[]=$orden;
+             }
+        }
+       
+
+
+      //  $ordenes= Orden_servicios::with('clientes.user','pagoServicio','servicio')->get();
         return DataTables::of($ordenes)
         ->addColumn('action', function ($orden) {
-            $output = <<<EOT
-            <a data="$orden->id"class="btn btn-xs btn-primary btn-table editar"><i class="glyphicon glyphicon-edit"></i>Panel</a>
-EOT;
+            $output ='';
+            $output .=' <a href='."'".url("Comprobantes/index")."/".$orden->pagoservicio->id."'".'"data="'.$orden->pagoservicio->id.'" title="Comprobantes "class="btn btn-xs btn-primary "><i class="fas fa-money-check"></i></a>';
+            if(Auth::user()->tipo==3){
+                $output .=' <a  href="#" data="'.$orden->pagoservicio->id.'" title="Comprobar el pago del servicio" class="btn btn-xs btn-primary btn-table comprobar"><i class="fas fa-check"></i></a>';
+            }
+            /*$output = <<<EOT
+            <a href="#" data="$orden->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
+EOT;*/
        // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
-        $output .=' <a href='."'".url("Comprobantes/index")."/".$orden->pagoservicio->id."'".'"data="'.$orden->pagoservicio->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Comprobantes</a>';
-       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        //$output .=' <a href='."'".url("Comprobantes/index")."/".$orden->pagoservicio->id."'".'"data="'.$orden->pagoservicio->id.'" title="Comprobantes "class="btn btn-xs btn-primary "><i class="fas fa-money-check"></i></a>';
+       // $output .=' <a  href="#" data="'.$orden->pagoservicio->id.'" title="Comprobar el pago del servicio" class="btn btn-xs btn-primary btn-table comprobar"><i class="fas fa-check"></i></a>';
+        // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             return $output;
         })->make();
         
+    }
+
+    public function comprobar($id){
+        $pagoServicio=PagoServicios::find($id)->update(['estado'=>'pagado']);
+        return response()->json(['update' => true]);
     }
 
     /**

@@ -4,7 +4,7 @@
     @component('componentes.addnew')
         @slot('header', $header)
         @slot('count', $cantidad)
-        @slot('mostrarBoton', $mostrarBoton)
+        @slot('mostrarBoton', $mostrarBoton);
     @endcomponent
     <br>
 
@@ -15,10 +15,9 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                    <th>Equipo</th>
-                    <th>Descripción</th>
-                    <th>Causa</th>
-                    <th>Solución</th>
+                <th>Descripción</th>
+                <th>Costo</th>
+                <th>accion</th>
             </tr>
         </thead>
 
@@ -34,12 +33,13 @@
                 
             </div>  
             <div class="form-group">
-                <label for="pago">Monto</label>
-                <input type="text" id="pago" name="pago" class="form-control col-5" placeholder="pago" required>
+                <label for="nombre">Descripción</label>
+                <input type="text" id="nombre" name="nombre" class="form-control col-5" placeholder="descripcion" required>
             </div>  
+
             <div class="form-group">
-                <label for="recibo">Recibo</label>
-                <input type="text" id="recibo" name="recibo" class="form-control col-5" placeholder="recibo" required>
+                    <label for="Precio">Costo</label>
+                    <input type="text" id="costo" name="costo" class="form-control col-5" placeholder="Precio" required>
             </div> 
            
         </div>
@@ -65,13 +65,37 @@
                     processing: true,
                     serverSide: true,
                     destroy: true,
-                    ajax: "{{ url('Equipos/fallasTable')}}"+"/"+"{{$id}}",
+                    language: {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                    ,
+                    ajax: "{{ url('Acciones/AccionesTable')}}",
                     type: 'GET',
                     columns: [
-                        {data: 'equipo', name: 'equipo' },
-                        {data: 'descripcion', name: 'descripcion' },
-                        {data:'causa',name:'causa'},
-                        {data:'solucion',name:'solucion'},
+                        {data:'nombre',name:'nombre'},
+                        {data:'costo',name:'costo'},
+                        { data:'action', name: 'action', orderable: false, searchable: false }
                     ]   
                 });
         }
@@ -102,102 +126,19 @@
                            }
                        }
                          if($(this).hasClass('editar')){
+                            $('#frm_add_new')[0].reset();
                             $.ajax({
-                                url: "{{url('Actividades/show')}}/"+$id,
+                                url: "{{url('Acciones/show')}}/"+$id,
                                 data: "&_token={{ csrf_token()}}",
                                 type:'GET',
                                 dataType: 'json',
                             }).done(function(data){
                                 $('#send').html('editar');
                                 $('#frm_add_new').attr('method',"PUT");
-                                $('#frm_add_new').attr('action',"{{url('Actividades/edit')}}/"+$id);
-                                console.log(data.actividad);
-                                $('#accion').val(data.actividad.accion.id);
-                                $('#horas').val(data.actividad.horas);
-                                if(data.actividad.equipos){
-                                    $equipos=[];
-                                    console.log('si hay equipos');
-                                    data.actividad.equipos.forEach(element=>{
-                                        let $aux=new Object();
-                                        $aux.equipo_id=element.id;
-                                        $aux.cantidad=element.pivot.cantidad;
-                                        $equipos.push($aux);
-                                        $('#tablaEquipos > tbody:last-child').append('<tr><td>'+element.descripcion+" modelo "+element.modelo+'</td>'+'<td>'+element.pivot.cantidad+'</td>'+'<td><button type="button" class="btn btn-primary borrarEquipo"'+"value='"+JSON.stringify($aux)+"'data='"+element.id+"'"+'>'+'borrar'+'</button>'+'</td></tr>');
-                                    });
-                                }
-                                if(data.actividad.materiales){
-                                    $materiales=[];
-                                    data.actividad.materiales.forEach(element=>{
-                                        let $aux=new Object();
-                                        $aux.material=element.nombre;
-                                        $aux.material_id=element.id;
-                                        if(element.pivot.cantidad!=null && element.pivot.cantidad!=''){
-                                            $aux.cantidad=element.pivot.cantidad;
-                                            $aux.metros='';
-                                        }
-                                        if(element.pivot.metros!=null && element.pivot.metros!=''){
-                                            $aux.metros=element.pivot.metros;
-                                            $aux.cantidad='';
-                                        }
-                                        $materiales.push($aux);
-                                        $("#materialesT").val(JSON.stringify($materiales));
-                                        console.log( $("#materialesT").val());
-                                        //console.log( $("#telefonos").val());
-                                        $('#tablaMateriales > tbody:last-child').append('<tr><td>'+$aux.material+'</td>'+'<td>'+$aux.cantidad+'</td>'+'<td>'+$aux.metros+'</td>'+'<td><button type="button" class="btn btn-primary borrarMaterial" data='+$aux.material_id+'>'+'borrar'+'</button>'+'</td></tr>');
-                                    });
-                                }
-                                /*$('#send').html('editar');
-                                $('#frm_add_new').attr('method',"PUT");
-                                $('#frm_add_new').attr('action',"{{url('Actividades/edit')}}/"+$id);
-                                $('#accion').val(data.Actividades.accion.id);
-                                $('#apellido').val(data.usuarios.apellido);
-                                $('#email').val(data.usuarios.email);
-                                $('#direccion').val(data.usuarios.direccion);
-                                $('#password').val(data.usuarios.password);
-                                $('#tipo').val(data.usuarios.tipo);
-                                $('#tipo').change();
-                                if(data.usuarios.tipo==2){
-                                    if(data.usuarios.especialidades.length>0){
-                                        console.log('aqui estan los servicios')
-                                        console.log($servicios);
-                                       
-                                        console.log('aqui se imprime el imput oculto');
-                                        console.log( $("#serviciosT").val());
-                                        data.usuarios.especialidades.forEach(element=>{
-                                            console.log("se agrga un servicio al array");
-                                            $servicios.push(element.descripcion);
-                                            console.log($servicios);
-                                            $('#tablaservicios > tbody:last-child').append('<tr><td>'+element.descripcion+'</td><td>'+'<button type="button" class="btn btn-primary borrartablaServicios" data='+element.descripcion+'>'+'borrar'+'</button>'+'</td></tr>');
-                                        });
-                                        $("#serviciosT").val($servicios);
-                                    }
-    
-    
-                                }
-                                if(data.usuarios.telefonos.length >0){
-                                    $telefonos=JSON.stringify(data.usuarios.telefonos);
-                                    console.log( $telefonos);
-                                    $("#telefonos").val($telefonos);
-                                    console.log('esto es lo que le estamos colocando a telefonos');
-                                    $tele=$("#telefonos").val();
-                                    console.log(data.usuarios.telefonos);
-                                    console.log();
-                                    data.usuarios.telefonos.forEach(element=>{
-                                       // $telefonos.push(element.numero);
-                                        $('#tablaTelefonos > tbody:last-child').append('<tr><td>'+element.numero+'</td><td>'+'<button type="button" class="btn btn-primary borrarTelefono" data='+element.numero+'>'+'borrar'+'</button>'+'</td></tr>');
-                                    });
-                                }
-                                 //alert('Se ha guardado con exito');
-                                console.log(data);
-                                $('#oculto').toggle('slow');*/
-                                // $('div.head-edit').find('span.head').html('Editar Registro '+ $id);
-                                //$('form#frm_edit').attr('data-id', $id);
-                               // data.servicios.forEach(element => {
-                                // console.log(element);
-                               //  $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
-                               // });
-                        $('#oculto').slideToggle('slow');
-                        //$('#frm_add_new')[0].reset();
+                                $('#frm_add_new').attr('action',"{{url('Acciones/edit')}}/"+$id);
+                                $('#nombre').val(data.Accion.nombre);
+                                $('#costo').val(data.Accion.costo);
+                                $('#oculto').slideToggle('slow');
                             });
                            
                         }

@@ -21,7 +21,8 @@ class BancoController extends Controller
         return view('bancos')->with(array(
             'mod' => self::MODEL,
             'cantidad' => $cantidad,
-            'header' => 'Bancos'
+            'header' => 'Bancos',
+            'mostrarBoton'=>true
         ));
     }
 
@@ -33,9 +34,7 @@ class BancoController extends Controller
     // para crear
     public function create(Request $request)
     {
-        $inputs = $request->all();
-        Bancos::create($inputs);
-        return response()->json('hola');
+       
     }
 
     /**
@@ -48,6 +47,21 @@ class BancoController extends Controller
     //  Cuando le das al boton buscar
     public function store(Request $request)
     {
+        $inputs = $request->all();
+        Bancos::create($inputs);
+        return response()->json('hola');
+    }
+    public function show($id)
+    {
+        try{
+            $banco=Bancos::findOrFail($id);
+            return response()->json([
+                'banco' => $banco
+            ],200);
+        }
+        catch(ModelNotFoundException $e){
+            return response()->json(['found' => false], 404);
+        } 
         
     }
 
@@ -59,14 +73,14 @@ class BancoController extends Controller
      */
 
     //  EL panel verde
-    public function show(Request $request)
+    public function bancosTable(Request $request)
     {
         $bancos = Bancos::all();
         return DataTables::of($bancos)
-        ->addColumn('action', function ($bancos) {    
+        ->addColumn('action', function ($banco) {    
             $output= <<<EOT
-                <button class="btn btn-warning editar btn-table" id="$bancos->id">Editar</button>
-                <button class="btn btn-danger eliminar btn-table" id="$bancos->id">Eliminar</button>            
+            <a href="#" data="$banco->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
+            <a href="#" data="$banco->id" title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>           
 EOT;
             return $output;
         })->make();
@@ -90,12 +104,10 @@ EOT;
      * @param  \App\Facultades  $facultades
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request,$id)
     {
-        $id = $request->input('item_id');
-        $nombre = $request->input('nombre');
         $banco = Bancos::find($id);
-        $banco->nombre = $nombre;
+        $banco->nombre = $request->nombre;
         $banco->save();
         return response()->json('hey');
     }

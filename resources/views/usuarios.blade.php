@@ -4,6 +4,7 @@
     @component('componentes.addnew')
         @slot('header', $header)
         @slot('count', $cantidad)
+        @slot('mostrarBoton', $mostrarBoton)
     @endcomponent
     <br>
 
@@ -38,9 +39,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#home">Datos principales</a>
                     </li>
-                    <li id='propId' class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#menu1">Propiedades</a>
-                    </li>
+                   
                     <li id='especialidadId' class="nav-item" style="display:none">
                         <a class="nav-link" data-toggle="tab" href="#menu2">Especialidad</a>
                     </li>
@@ -75,6 +74,7 @@
                                         <option value=4>Cliente</option>
                                         <option value=2>Tecnico</option>
                                         <option value=3>Administrador contable</option>
+                                        <option value=5>Operador</option>
                                     </select>
                                 </div>
                             </div>
@@ -142,7 +142,11 @@
                             <div class="row">
                                 <div class="col">
                                     <label for="servicio">Nombre</label>
-                                    <select name="servicio" id="servicio"></select>
+                                    <select name="servicio" id="servicio">
+                                        @foreach ($servicios as $servicio)
+                                        <option value={{$servicio->id}}>{{$servicio->descripcion}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col">
                                     <button class=" btn btn-danger" id="agregarServicio" name="agregarServicio">Agregar</button>
@@ -203,10 +207,12 @@
                 }).done(function(data){
                     //alert('Se ha guardado con exito');
                     console.log(data);
-                    data.servicios.forEach(element => {
-                       // console.log(element);
-                        $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
-                    });
+                    if(data.servicios){
+                        data.servicios.forEach(element => {
+                            // console.log(element);
+                            $('#servicio').append('<option data='+element.descripcion+''+'value='+element.id+'>'+element.descripcion+'</option>');
+                         });
+                    }
                     //$('#oculto').slideToggle('slow');
                     //$('#frm_add_new')[0].reset();
                 });
@@ -230,6 +236,31 @@
                     processing: true,
                     serverSide: true,
                     destroy: true,
+                    language: {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                    ,
                     ajax: "{{ url('Usuarios/usertable')}}",
                     type: 'GET',
                     columns: [
@@ -257,6 +288,7 @@
                             $('#send').html('editar');
                             $('#frm_add_new').attr('method',"PUT");
                             $('#frm_add_new').attr('action',"{{url('Usuarios/edit')}}/"+$id);
+                            $('#tablaTelefonos').html('<table id="tablaTelefonos" class="table"><thead class=""><tr><th>Telefono</th><th>borrar</th></tr></thead><tbody></tbody></table>');
                             $('#name').val(data.usuarios.name);
                             $('#apellido').val(data.usuarios.apellido);
                             $('#email').val(data.usuarios.email);
@@ -283,7 +315,10 @@
 
                             }
                             if(data.usuarios.telefonos.length >0){
-                                $telefonos=JSON.stringify(data.usuarios.telefonos);
+                                data.usuarios.telefonos.forEach(element => {
+                                    $telefonos.push(element.numero);
+                                });
+                               // $telefonos=JSON.stringify(data.usuarios.telefonos);
                                 console.log( $telefonos);
                                 $("#telefonos").val($telefonos);
                                 console.log('esto es lo que le estamos colocando a telefonos');
