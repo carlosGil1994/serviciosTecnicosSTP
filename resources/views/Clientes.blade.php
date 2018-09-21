@@ -16,9 +16,9 @@
         <thead class="thead-dark">
             <tr>
                 <th>Nombre</th>
-                <th>Direccion</th>
+                <th>Dirección</th>
                 <th>Tipo</th>
-                <th>action</th>
+                <th>acción</th>
             </tr>
         </thead>
 
@@ -57,7 +57,7 @@
                                     </select>
                             </div>
                         <div class="form-group">
-                            <textarea name="direccionP" id="direccionP" cols="50" rows="5">Direccion</textarea>
+                            <textarea name="direccionP" id="direccionP" cols="50" rows="5">Dirección</textarea>
                         </div>
                         <div class="form-group">
                             <div class="row">
@@ -144,7 +144,7 @@
         @endslot
     @endcomponent--}}
     <script>
-          $telefonosP=[];
+        
         function showTable(){
                 $('#table').DataTable({
                     processing: true,
@@ -187,7 +187,7 @@
         }
         $(document).ready(function(){
             $telefonos=[];
-          
+            $telefonosP=[];
             $usuarios=[];
 
              function bindButtons(){
@@ -236,9 +236,12 @@
                                 data.cliente.telefonos.forEach(element=>{
                                     console.log(element);
                                     $telefonosP.push(element.numero);
+                                    console.log($telefonosP);
                                     $('#tablaTelefonosP > tbody:last-child').append('<tr><td>'+element.numero+'</td><td>'+'<button type="button" class="btn btn-primary borrarTelefonoP" data='+element.numero+'>'+'borrar'+'</button>'+'</td></tr>');
                                 });
+                                console.log($("#telefonosP").val());
                                 $("#telefonosP").val($telefonosP);
+                                console.log($("#telefonosP").val());
                             }
                             if(data.cliente.user){
                                     $usuarios=[];
@@ -343,6 +346,7 @@
                 console.log($indice);
                if($indice>-1){
                 $telefonosP.splice($indice, 1);
+                $("#telefonosP").val($telefonosP);
                }
                $(this).closest('tr').remove();
                 console.log($telefonosP);

@@ -150,9 +150,11 @@ EOT;
                 $output ='<a href="#edit-'.$order->id.'" data="'.$order->id.'" title="Editar"class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
                 $output .=' <a href='."'".url("Actividades/showActividades")."/".$order->id."'".'"data="'.$order->id.'" title="Actividades" class="btn btn-xs btn-primary"><i class="fas fa-tasks"></i></a>';
                 $output .=' <a href="#edit-'.$order->id.'" data="'.$order->id.'" title="Cerrar orden" class="btn btn-xs btn-primary btn-table cerrarOrden"><i class="fas fa-user-check"></i></a>';
+                $output .=' <a href="#edit-'.$order->id.'" data="'.$order->id.'" title="Cancelar orden" class="btn btn-xs btn-primary btn-table cancelar"><i class="fas fa-user-check"></i></a>';
             }
             if(Auth::user()->tipo==5){//operador
                 $output .=' <a href='."'".url("Actividades/showActividades")."/".$order->id."'".'"data="'.$order->id.'" title="Actividades" class="btn btn-xs btn-primary"><i class="fas fa-tasks"></i></a>';
+                
             }   
             if(Auth::user()->tipo==1){
                 $output ='<a href="#edit-'.$order->id.'" data="'.$order->id.'" title="Editar"class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
@@ -160,6 +162,8 @@ EOT;
                 $output .=' <a href='."'".url("Ordenes/generarPdf")."/".$order->id."'".'"data="'.$order->id.'" title="Generar cotización" target="_blank" class="btn btn-xs btn-primary"><i class="far fa-file-pdf"></i></a>';
                 $output .=' <a href='."'".url("Ordenes/Cotizaciones")."/".$order->id."'".'"data="'.$order->id.'" title="Cotizaciónes" class="btn btn-xs btn-primary "><i class="fas fa-shopping-cart"></i></a>';    
                 $output .=' <a href="#edit-'.$order->id.'" data="'.$order->id.'" title="Cerrar orden" class="btn btn-xs btn-primary btn-table cerrarOrden"><i class="fas fa-user-check"></i></a>';
+                $output .=' <a href="#edit-'.$order->id.'" data="'.$order->id.'" title="Cancelar orden" class="btn btn-xs btn-primary btn-table cancelar"><i class="fas fa-trash-alt"></i></a>';
+                
             }
        
         return $output;

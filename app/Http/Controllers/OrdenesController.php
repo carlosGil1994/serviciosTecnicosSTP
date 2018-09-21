@@ -84,6 +84,7 @@ class OrdenesController extends Controller
         $date=[$aux->day,$aux->month,$aux->year];
         $orden['fecha']=$date;
         $suma=0;
+        $sumaTotal=0;
 
         foreach ($actividades as $act) {
             $accion= Actividades::findOrFail($act->id)->accion->costo;
@@ -91,21 +92,35 @@ class OrdenesController extends Controller
             $materialesArray=[];
             $equipos=Actividades::find($act->id)->equipos;
             $materiales=Actividades::find($act->id)->materiales;
+            $accionnombre= Actividades::findOrFail($act->id)->accion;
             if($equipos){
                 foreach ($equipos as $equipo) {
-                    $equiposArray[]=$equipo;
-                    $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                  
+                    if( $accionnombre=='instalacion'){ //hay que cambiar esto a mayuscula
+                        $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                        $equipo['totalEquipo']=( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                        $equiposArray[]=$equipo;
+                   }
+                   else{
+                       $suma = $suma +($accion*$equipo->pivot->cantidad);
+                       $equipo['totalEquipo']=($accion*$equipo->pivot->cantidad);
+                       $equipo['precio']=$suma;
+                       $equiposArray[]=$equipo;
+                   }
                 }
             }
             if($materiales){
                 foreach ($materiales as $material) {
-                    $materialesArray[]=$material;
+                   
                     if($material->pivot->cantidad){
+                        $material['totalMaterial']=( $material->precio*$material->pivot->cantidad);
                         $suma = $suma +( $material->precio*$material->pivot->cantidad);    
                     }
                     if($material->pivot->metros){
+                        $material['totalMaterial']=($material->precio*$material->pivot->metros);
                         $suma = $suma +( $material->precio*$material->pivot->metros);
                     }
+                    $materialesArray[]=$material;
                 }
             }
             $act['action']=Actividades::findOrFail($act->id)->accion;
@@ -114,7 +129,7 @@ class OrdenesController extends Controller
         }
         $orden['subtotal']=$suma;
         $orden['actividades']=$actividades;
-        
+        $orden->pagoServicio()->update(['pago_total'=>$suma,'estado'=>'Espera del 50%']);
        // dd($orden);
         $data['orden']=$orden;
         $fecha= Carbon::now();
@@ -180,7 +195,7 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
             }
             $orden= Orden_servicios::create(['cliente_id'=>$cliente['cliente'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'creador_id'=>Auth::id(),'servicio_id'=>$request->servicio,'estado'=>$estado]);
            // $orden= Orden_servicios::create([$request->all()]);
-           $orden->pagoServicio()->create(['estado'=>'no pagada']);
+           $orden->pagoServicio()->create(['estado'=>'En espera']);
             return response()->json(['create' => true], 200);
         }
         catch(Exeption $e){
@@ -269,6 +284,7 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
             return response()->json(['delete' => false], 500);
         }
     }
+  
 
     /**
      * Remove the specified resource from storage.
@@ -295,12 +311,12 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
             //debe ser con Auth::user() ala hora de estar en produccion
            $user=Auth::user(); 
           // $user=User::findOrfail(1);
-            if($user->tipo==2){
+            if($user->tipo==2 || $user->tipo==1){
                 $suma=0;
                 /// es tecnico
                 //tambien se actualizara el pago del tecnico
                 $orden= Orden_servicios::findOrFail($id);
-                $orden->update(['cierre_tecnico'=> $user/*$user->id*/,'fecha_fin'=>Carbon::now()]);
+                $orden->update(['cierre_tecnico'=> $user->id,'fecha_fin'=>Carbon::now(),'estado'=>"Espera por cierre del cliente"]);
                 $actividades= $orden->actividades;
                 //aqui se actualizara el precio del pago servicio si este es 0
               //  dd($orden->pagoServicio->pago_total);
@@ -309,13 +325,19 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
                     foreach ($actividades as $actividad) {
                         // monto de equipos
                        // dd($actividad);
+                       $accionnombre= Actividades::findOrFail($actividad->id)->accion;
                         $accion= Actividades::findOrFail($actividad->id)->accion->costo;
                         //dd($accion);
                         if($equipoActividades=Actividades::findOrFail($actividad->id)->equipos){
                              //aqui se debe iterar
                              //dd($equipoActividades);
                             foreach ($equipoActividades as $equipo) {
-                                $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                                if( $accionnombre=='instalacion'){ //hay que cambiar esto a mayuscula
+                                     $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                                }
+                                else{
+                                    $suma = $suma +($accion*$equipo->pivot->cantidad);
+                                }
                                 //dd($suma);
                             } 
                          }
@@ -330,14 +352,15 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
                                     $suma = $suma +( $material->precio*$material->pivot->metros);
                                 }
                              }
-                           
                         }
                     }
                      $orden->pagoServicio()->update(['pago_total'=>$suma]);
                 }
             }
             if($user->tipo==3){
-                $orden= Orden::findOrFail($id)->update(['cierre_cliente'=> $user->id]);
+                $orden= Orden::findOrFail($id);
+                $orden->update(['cierre_cliente'=> $user->id,'estado'=>'completado']);
+                $orden-pagoServicio()->update(['estado'=>'Espera pago total']);
             }
             return response()->json(['update' => true], 200);
         }
@@ -351,9 +374,10 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
 
     public function cancelar(Request $request,$id){
         $user=Auth::user(); 
-        $orden= Orden::findOrFail($id);
-        $orden->update(['cancelador_id'=> $user->id,'comentario'=>$request->comentario]);
-        $pagoServicio =  $orden->pagoServicio()->update(['esatdo'=>'cancelado']);
+        $orden= Orden_servicios::findOrFail($id);
+        $orden->update(['cancelador_id'=> $user->id,'estado'=>'cancelado']);
+        $pagoServicio =  $orden->pagoServicio()->update(['estado'=>'cancelado']);
+        return response()->json(['update' => true], 200);
     }
     public function calculoMonto($id){
         try {

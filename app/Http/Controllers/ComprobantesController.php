@@ -60,7 +60,7 @@ EOT;
      */
     public function store(Request $request)
     {
-        $comprobante= Comprobantes::create(['estatus'=>'asffs','pago_parcial'=>$request->pago,'fecha_pago'=>Carbon::now(),'pago_servicio_id'=>$request->pagoServicioId,'banco_id'=>$request->banco,'num_recibo'=>$request->recibo]);
+        $comprobante= Comprobantes::create(['estatus'=>'asffs','pago_parcial'=>$request->pago,'fecha_pago'=>$request->fechaPago,'pago_servicio_id'=>$request->pagoServicioId,'banco_id'=>$request->banco,'num_recibo'=>$request->recibo]);
         return response()->json([
             'create' => true
         ],200);

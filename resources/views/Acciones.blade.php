@@ -17,7 +17,7 @@
             <tr>
                 <th>Descripción</th>
                 <th>Costo</th>
-                <th>accion</th>
+                <th>acción</th>
             </tr>
         </thead>
 

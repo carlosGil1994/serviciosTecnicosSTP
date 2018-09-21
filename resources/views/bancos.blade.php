@@ -11,8 +11,8 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>name</th>
-                <th></th>
+                <th>Nombre</th>
+                <th>Acción</th>
             </tr>
         </thead>
 

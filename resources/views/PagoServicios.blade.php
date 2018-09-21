@@ -186,6 +186,19 @@
                         dataType: 'json',
                     }).done(function(data){
                         alert('Se ha comprobado el pago del servicio');
+                        showTable();
+                    });
+            });
+            $("#table").on("click",'.comprobar50',function(e){
+                $id = $(this).attr('data');
+                $.ajax({
+                        url: "{{url('PagoServicios/comprobar50')}}/"+$id,
+                        type:'PUT',
+                        data: "&_token={{ csrf_token()}}",
+                        dataType: 'json',
+                    }).done(function(data){
+                        alert('Se ha comprobado el pago del 50% del servicio');
+                        showTable();
                     });
             });
             showTable();

@@ -15,8 +15,8 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>orden</th>
-                <th>fecha</th>
+                <th>Orden</th>
+                <th>Fecha</th>
                 <th>Acción</th>
             </tr>
         </thead>

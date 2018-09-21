@@ -25,10 +25,10 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>fecha</th>
-                <th>pago</th>
-                <th>banco</th>
-                <th>recibo</th>
+                <th>Fecha</th>
+                <th>Pago</th>
+                <th>Banco</th>
+                <th>Rererencia</th>
             </tr>
         </thead>
 
@@ -47,13 +47,20 @@
                         <option value={{$banco->id}}>{{$banco->nombre}}</option>
                     @endforeach   
                 </select>
+            </div>
+            <label for='fechaIni'>Fecha de pago</label>
+            <div class="input-group date datepicker">
+                <input name='fechaPago' id='fechaPago' placeholder="Fecha de pago" type="text" class="form-control">
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
             </div>  
             <div class="form-group">
                 <label for="pago">Monto</label>
                 <input type="text" id="pago" name="pago" class="form-control col-5" placeholder="pago" required>
             </div>  
             <div class="form-group">
-                <label for="recibo">Recibo</label>
+                <label for="recibo">Referencia</label>
                 <input type="text" id="recibo" name="recibo" class="form-control col-5" placeholder="recibo" required>
             </div> 
             <input type="hidden" value='{{$id}}' name="pagoServicioId">   
@@ -75,6 +82,12 @@
         @endslot
     @endcomponent--}}
     <script>
+         $('.datepicker').datepicker({
+            format: "dd-mm-yy",
+            clearBtn: true,
+            orientation: "bottom auto",
+            todayHighlight: true
+        }); 
         function showTable(){
                 $('#table').DataTable({
                     processing: true,

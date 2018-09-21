@@ -15,10 +15,10 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>descripción</th>
-                <th>modelo</th>
-                <th>precio</th>
-                <th>accion</th>
+                <th>Descripción</th>
+                <th>Modelo</th>
+                <th>Precio</th>
+                <th>Acción</th>
             </tr>
         </thead>
 

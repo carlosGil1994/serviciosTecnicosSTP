@@ -132,7 +132,7 @@
             <tr>
                 <th>Orden</th>
                 <th>Cliente</th>
-                <th>Direccion</th>
+                <th>Dirección</th>
                 <th>Descripción</th>
                 <th>Servicio</th>
                 <th>Fecha inicio</th>
@@ -189,6 +189,19 @@
                         dataType: 'json',
                     }).done(function(data){
                         console.log(data);
+                        showTable();
+                    });
+                    }
+                }
+                if($(this).hasClass('cancelar')){
+                    if(confirm("Desea cancelar la orden")){
+                    $.ajax({
+                        url: "{{url('Ordenes/cancelar')}}/"+$id,
+                        data: "&_token={{ csrf_token()}}",
+                        type:'PUT',
+                        dataType: 'json',
+                    }).done(function(data){
+                       alert('Se ha cancelado la orden efectivamente');
                         showTable();
                     });
                     }

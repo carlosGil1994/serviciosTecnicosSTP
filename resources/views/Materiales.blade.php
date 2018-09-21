@@ -16,9 +16,9 @@
         <thead class="thead-dark">
             <tr>
                 <th>Nombre</th>
-                <th>Descripcion</th>
+                <th>Descripción</th>
                 <th>Precio</th>
-                <th>Accion</th>
+                <th>Acción</th>
             </tr>
         </thead>
 

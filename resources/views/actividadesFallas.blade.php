@@ -19,7 +19,7 @@
                 <th>Descripción</th>
                 <th>Causa</th>
                 <th>Solución</th>
-                <th>actión</th>
+                <th>Acción</th>
             </tr>
         </thead>
 

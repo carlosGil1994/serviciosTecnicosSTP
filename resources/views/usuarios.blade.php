@@ -20,10 +20,10 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>nombre</th>
-                <th>apellido</th>
-                <th>direccion</th>
-                <th>action</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Dirección</th>
+                <th>Acción</th>
             </tr>
         </thead>
 

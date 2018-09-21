@@ -405,7 +405,7 @@
                 <th>estado</th>
                 <th>horas</th>
                 <th>fecha</th>
-                <th>Accion</th>
+                <th>Acción</th>
             </tr>
         </thead>
 

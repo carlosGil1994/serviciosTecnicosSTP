@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Orden_servicios;
 use App\User;
+use App\Servicios;
+use Carbon\Carbon;
 use App\PagoServicios;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
@@ -22,6 +24,15 @@ class PagoServiciosController extends Controller
             'mod' => 'Ordenes',
             'cantidad' => 0,
             'header' => 'Pago de servicios',
+            'mostrarBoton'=>false
+        ));
+    }
+    public function estadisticas()
+    {
+        return view('EstadisticasAdministracion')->with(array(
+            'mod' => 'PagoServicios',
+            'cantidad' => 0,
+            'header' => 'Estadisticas',
             'mostrarBoton'=>false
         ));
     }
@@ -60,7 +71,10 @@ class PagoServiciosController extends Controller
             $output ='';
             $output .=' <a href='."'".url("Comprobantes/index")."/".$orden->pagoservicio->id."'".'"data="'.$orden->pagoservicio->id.'" title="Comprobantes "class="btn btn-xs btn-primary "><i class="fas fa-money-check"></i></a>';
             if(Auth::user()->tipo==3){
-                $output .=' <a  href="#" data="'.$orden->pagoservicio->id.'" title="Comprobar el pago del servicio" class="btn btn-xs btn-primary btn-table comprobar"><i class="fas fa-check"></i></a>';
+                $output .=' <a  href="#" data="'.$orden->pagoservicio->id.'" title="Comprobar el pago del servicio" class="btn btn-xs btn-primary btn-table comprobar"><i class="fas fa-check-double"></i></a>';
+                if($orden->pagoServicio->estado=='Espera del 50%'){
+                    $output .=' <a  href="#" data="'.$orden->pagoservicio->id.'" title="Comprobar pago 50%" class="btn btn-xs btn-primary btn-table comprobar50"><i class="fas fa-check"></i></a>';
+                }
             }
             /*$output = <<<EOT
             <a href="#" data="$orden->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
@@ -77,6 +91,32 @@ EOT;*/
     public function comprobar($id){
         $pagoServicio=PagoServicios::find($id)->update(['estado'=>'pagado']);
         return response()->json(['update' => true]);
+    }
+    public function comprobar50($id){
+        $pagoServicio=PagoServicios::find($id)->update(['estado'=>'Pagado 50%']);
+        return response()->json(['update' => true]);
+    }
+
+    public function montoServicios(Request $request){
+        
+        $fechaInicio = new Carbon($request->fechaInicio.' '.'00:00:00');
+        $fechaFinal = new Carbon($request->fechaFinal.' '."23:59:59");
+        $pagoServicios= PagoServicios::whereBetween('created_at', [ $fechaInicio,  $fechaFinal])->where('estado','pagado')->get();
+       // dd($pagoServicios);
+        $servicios= Servicios::all();
+        foreach ($servicios as $servicio) {
+             $suma=0;
+            foreach($pagoServicios as $pagoServicio) {
+              //  dd($suma);
+                $servicioOrden=$pagoServicio->ordenServicio->servicio;
+              //  dd($pagoServicios);
+                if($servicioOrden->id == $servicio->id){
+                    $suma+=$pagoServicio->pago_total;
+                }
+            }
+            $servicio['monto']=$suma;
+        }
+        return response()->json(['servicios' =>  $servicios]);
     }
 
     /**

@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         'Actividades*',
         'Especialidades*',
         'Comprobantes*',
-        'Acciones*'
+        'Acciones*',
+        'PagoServicios*'
     ];
 }

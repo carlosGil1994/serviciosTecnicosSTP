@@ -146,9 +146,10 @@
                         <thead>
                             <tr>
                                 <th align="center"  class="fondo"><strong>CANT.</strong></th>
-                                <th align="center" class="fondo"><strong>ACCIÓN.</strong></th>
+                                <th align="center" class="fondo"><strong>DESCRIPCIÓN</strong></th>
                                 <th align="center" class="fondo"><strong>EQUIPO/MATERIAL</strong></th>
                                 <th align="center" class="fondo"><strong>P. UNITARIO</strong></th>
+                                <th align="center" class="fondo"><strong>TOTAL</strong></th>
                             </tr>
                         </thead>
                         @foreach ($orden['actividades'] as $actividad)
@@ -158,6 +159,7 @@
                                     <td width="16%" align="left"><span class="text">{{$actividad['accion']['nombre']}}</span></td>
                                     <td width="16%"><span class="text">{{$equipo['descripcion']}} modelo {{$equipo['modelo']}} </span></td>
                                     <td width="16%" align="right"><span class="text">{{ $equipo['precio'] }}</span></td>
+                                    <td width="16%" align="right"><span class="text">{{ $equipo['totalEquipo'] }}</span></td>
                                 </tr>
                             @endforeach
                             @foreach ($actividad['materiales'] as $material)
@@ -166,11 +168,13 @@
                                     <td width="16%" align="left"><span class="text">{{$actividad['accion']['nombre']}}</span></td>
                                     <td width="16%"><span class="text">{{$material['nombre']}}</span></td>
                                     <td width="16%" align="right"><span class="text">{{$material['precio']}}</span></td>
+                                    <td width="16%" align="right"><span class="text">{{ $material['totalMaterial'] }}</span></td>
                                 </tr>
                             @endforeach
                         @endforeach
                         
                         <tr> 
+                            <td style="border:0;">&nbsp;</td>
                             <td style="border:0;">&nbsp;</td>
                             <td style="border:0;">&nbsp;</td>
                             <td align="right"><strong>TOTAL BS.S.</strong></td>

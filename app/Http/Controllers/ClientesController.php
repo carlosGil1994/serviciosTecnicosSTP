@@ -149,6 +149,7 @@ class ClientesController extends Controller
                     'errors'  => $validator->errors()->all()
                 ]);
             }*/
+           // dd($request->telefonosP);
             try{
                 $telefonoarray=[];
                 if(isset($request->telefonosP)){
@@ -157,7 +158,7 @@ class ClientesController extends Controller
                         $telefonoarray[]['numero']=$telefono;
                     }
                 }
-               // dd($telefonoarray);
+               
                 $datos=[];
                 $datos['nombre']=$request->nombreP;
                 $datos['direccion']=$request->direccionP;
@@ -176,15 +177,16 @@ class ClientesController extends Controller
                         ->save($usuario);
                     }
                 }
-                $telefonos = $cliente->telefonos;
-                        foreach ($telefonos as $key => $telefono) {
-                            $telefono->delete();
-                        }
+               
                 if(isset($request->telefonosP)){
+                    $telefonos = $cliente->telefonos;
+                    foreach ($telefonos as $telefono) {
+                        $telefono->delete();
+                    }
                     
                         $cliente->telefonos()->createMany($telefonoarray);
                 }
-            return response()->json(['create' => true], 200);
+            return response()->json(['update' => true], 200);
         } 
         catch(exeption $e){
             return response()->json(['create' => false,"mensaje"=>$e->getMessage()], 404);

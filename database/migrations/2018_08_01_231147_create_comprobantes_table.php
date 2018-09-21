@@ -16,12 +16,10 @@ class CreateComprobantesTable extends Migration
         Schema::create('comprobantes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('pago_servicio_id')->nullable();
-            $table->timestamp('fecha_pago');
+            $table->date('fecha_pago');
             $table->integer('banco_id');
-            $table->integer('pago_tecnicos_id')->nullable();
             $table->integer('num_recibo');
-            $table->decimal('pago_parcial',9,3);
-            $table->string('estatus');
+            $table->decimal('pago_parcial',9,2);
             $table->timestamps();
         });
     }

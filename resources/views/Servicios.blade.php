@@ -29,7 +29,7 @@
         @slot('inputs')
         <div class="container">
             <div class="form-group">
-                <label for="pago">Descripcion</label>
+                <label for="pago">Descripción</label>
                 <input type="text" id="descripcion" name="descripcion" class="form-control col-5" placeholder="Descripcion" required>
             </div>  
         </div>
