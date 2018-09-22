@@ -26,7 +26,11 @@ class Actividades extends Model
         return $this->belongsToMany('App\Materiales','materiales_por_actividad','actividad_id','material_id')->withPivot('cantidad','metros');
     }
 
-    public function fallas(){
+    /*public function fallas(){
         return $this->belongsToMany('App\Fallas','falla_por_actividades','actividad_id','falla_id');
+    }*/
+    public function fallas(){
+        return $this->hasMany('App\Fallas', 'actividad_id', 'id');
     }
+    
 }

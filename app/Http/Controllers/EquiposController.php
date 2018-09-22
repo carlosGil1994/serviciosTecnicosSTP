@@ -53,6 +53,7 @@ class EquiposController extends Controller
         $equipo=Equipos::find($id);
         $fallas=$equipo->fallas;
         foreach ($fallas as $falla) {
+            $falla['cliente']=$falla->actividad->ordenservicio->clientes->nombre;
             $falla['equipo']=$equipo->descripcion.' '.$equipo->modelo;
         }
        
@@ -97,7 +98,10 @@ EOT;
             }
        // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
         $output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'" title="Fallas" class="btn btn-xs btn-primary "><i class="fas fa-exclamation-triangle"></i></a>';
-       // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
+        if(Auth::user()->tipo==1){
+            $output.= ' <a href="#edit-'.$Equipo->id.'" data="'.$Equipo->id.'"title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>';
+        }
+        // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             return $output;
         })->make();
     }
@@ -203,6 +207,15 @@ EOT;
     {
         try{
             $Equipo=Equipos::findOrFail($id);
+            $actividades= $Equipo->actividades;
+            if($actividades){
+                foreach ($actividades as $actividad) {
+                    foreach ($actividad->fallas as $falla) {
+                        $falla->delete();
+                    }
+                    $actividad->delete();
+                }
+            }
             $Equipo->delete();
             return response()->json(['delete' => true]);
         } 

@@ -16,6 +16,7 @@
         <thead class="thead-dark">
             <tr>
                     <th>Equipo</th>
+                    <th>Cliente</th>
                     <th>Descripción</th>
                     <th>Causa</th>
                     <th>Solución</th>
@@ -69,6 +70,7 @@
                     type: 'GET',
                     columns: [
                         {data: 'equipo', name: 'equipo' },
+                        {data: 'cliente', name: 'cliente' },
                         {data: 'descripcion', name: 'descripcion' },
                         {data:'causa',name:'causa'},
                         {data:'solucion',name:'solucion'},

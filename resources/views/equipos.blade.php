@@ -15,7 +15,7 @@
     width="100%" role="grid" style="width: 100%;">
         <thead class="thead-dark">
             <tr>
-                <th>Descripción</th>
+                <th>nombre</th>
                 <th>Modelo</th>
                 <th>Precio</th>
                 <th>Acción</th>
@@ -34,7 +34,7 @@
                 
             </div>  
             <div class="form-group">
-                <label for="descripcion">Descripción</label>
+                <label for="descripcion">Nombre</label>
                 <input type="text" id="descripcion" name="descripcion" class="form-control col-5" placeholder="descripcion" required>
             </div>  
             <div class="form-group">
@@ -117,6 +117,17 @@
                        if($(this).hasClass('crear')){
                             $('#oculto').toggle('slow');
                        }
+                       if(confirm("Desea borrar el equipo?")){
+                            $.ajax({
+                                url: "{{url('Equipos/delete')}}/"+$id,
+                                data: "&_token={{ csrf_token()}}",
+                                type:'DELETE',
+                                dataType: 'json',
+                            }).done(function(data){
+                               alert('Equipo borrado');
+                                showTable();
+                            });
+                        }  
                        if($(this).hasClass('completar')){
                            if(confirm("Desea completar la actividad")){
                             $.ajax({

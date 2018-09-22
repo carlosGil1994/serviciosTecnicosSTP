@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Clientes;
 use App\User;
 use Exception;
@@ -42,7 +43,13 @@ class ClientesController extends Controller
         $cliente = Clientes::all();
         return DataTables::of($cliente)
         ->addColumn('action', function ($cliente) {
-            return '<a href="#edit-'.$cliente->id.'" data="'.$cliente->id.'" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
+            $output='';
+            $output.='<a href="#edit-'.$cliente->id.'" data='.$cliente->id.' title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
+            if(Auth::user()->tipo==1){
+                $output.= ' <a href="#edit-'.$cliente->id.'" data="'.$cliente->id.'"title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>';
+            }
+            //$output.=' <a href="#edit-'.$cliente->id.'" data="'.$cliente->id.'" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
+            return $output;
         })->make();
     }
 
@@ -75,10 +82,12 @@ class ClientesController extends Controller
         $datos['tipo']=$request->tipo;
         $datos['telefonos']=$telefonoarray;
         $datos['usuarios']=json_decode($request->usuariosT, true);
+        $datos['correo']=$request->correo;
+        $datos['riff']=$request->riff;
         
         try{
          
-            $cliente = Clientes::create(['nombre'=>$datos['nombre'],'direccion'=> $datos['direccion'],'tipo'=>$datos['tipo']]);
+            $cliente = Clientes::create(['nombre'=>$datos['nombre'],'direccion'=> $datos['direccion'],'tipo'=>$datos['tipo'],'correo'=>$datos['correo'],'riff'=>$datos['riff']]);
             if($datos['usuarios']!=null){
                 foreach ($datos['usuarios'] as $equipo) {
                    // dd($equipo);
@@ -202,7 +211,33 @@ class ClientesController extends Controller
     public function destroy($id)
     {
         try {
-            $propiead = Propiedades::findOrFail($request->id)->delete();
+            $cliente = Clientes::findOrFail($id);
+           // dd($cliente);
+            $cliente->user()->detach();
+            $telefonos = $cliente->telefonos;
+                if($telefonos){
+                    foreach ($telefonos as $telefono) {
+                        $telefono->delete();
+                    }
+                }
+                if($cliente->ordenServicio){
+                    foreach ($cliente->ordenServicio as $orden) {
+                        $actividades= $orden->actividades;
+                        if($actividades){
+                            foreach ($actividades as $actividad) {
+                                foreach ($actividad->fallas as $falla) {
+                                    $falla->delete();
+                                }
+                                $actividad->delete();
+                            }
+                        }
+                     
+                        $orden->delete();
+                    }
+                }
+                $cliente->delete();
+               
+
             return response()->json(['delete' => true], 200);
         }
         catch(Exeption $e){

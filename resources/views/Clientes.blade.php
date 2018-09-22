@@ -10,21 +10,7 @@
 
     {{--Componente de la barra de busqueda--}}
    
-    <br>
-    <table id="table" class="table table-striped table-bordered"
-    width="100%" role="grid" style="width: 100%;">
-        <thead class="thead-dark">
-            <tr>
-                <th>Nombre</th>
-                <th>Dirección</th>
-                <th>Tipo</th>
-                <th>acción</th>
-            </tr>
-        </thead>
 
-        <tbody>
-        </tbody>
-    </table>
     {{--Componente del panel para agregar nuevo registro--}}
     @component('componentes.paneladdnew')
         @slot('mod', $mod)
@@ -46,23 +32,31 @@
                     <div id='home' class="container tab-pane active">
                         <div class="form-group">
                             <label for="nombre">Nombre</label>
-                            <input type="text" class="form-control" id="nombreP" name="nombreP" placeholder="Nombre deL bien">
+                            <input type="text" class="form-control" id="nombreP" name="nombreP" placeholder="Nombre del cliente">
                         </div>
                         <div class="form-group">
-                                <label for="tipo">Tipo</label>
-                                <select class="form-control" name="tipo" id="tipo">
-                                        <option value='Residencial'>Residencial</option>
-                                        <option value='Empresa'>Comercio</option>
-                                        <option value='Industrial'>Industrial</option>
-                                    </select>
+                            <label for="tipo">Tipo</label>
+                            <select class="form-control" name="tipo" id="tipo">
+                                    <option value='Residencial'>Residencial</option>
+                                    <option value='Empresa'>Comercio</option>
+                                    <option value='Industrial'>Industrial</option>
+                                </select>
+                        </div>
+                        <div style="display:none" class="form-group riff">
+                                <label for="email">correo</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="correo del usuario">
                             </div>
+                        <div  style="display:none" class="form-group riff">
+                                <label for="riff">Riff</label>
+                                <input type="text" class="form-control" id="riff" name="riff" placeholder="Riff del cliente">
+                        </div>
                         <div class="form-group">
                             <textarea name="direccionP" id="direccionP" cols="50" rows="5">Dirección</textarea>
                         </div>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col">
-                                    <input type="text" class="form-control" id="telefonoP" name="telefonoP" placeholder="agregar telefono del bien">
+                                    <input type="text" class="form-control" id="telefonoP" name="telefonoP" placeholder="Agregar teléfono del cliente">
                                 </div>
                                 <div class="col">
                                     <button class=" btn btn-danger" id="agregarTlfnP" name="agregarTlfnP">Agregar</button>
@@ -73,8 +67,8 @@
                             <table id="tablaTelefonosP" class="table">
                                 <thead class="">
                                     <tr>
-                                        <th>Telefono</th>
-                                        <th>borrar</th>
+                                        <th>Teléfono</th>
+                                        <th>Borrar</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -130,6 +124,21 @@
             
         @endslot
     @endcomponent
+    <br>
+    <table id="table" class="table table-striped table-bordered"
+    width="100%" role="grid" style="width: 100%;">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Tipo</th>
+                <th>acción</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        </tbody>
+    </table>
 
     {{--Componente para el view del panel--}}
     @component('componentes.panelview')
@@ -189,7 +198,16 @@
             $telefonos=[];
             $telefonosP=[];
             $usuarios=[];
-
+            $('#tipo').on('change',function(e){
+                e.preventDefault;
+                let valorCambiado =$(this).val();
+                if(valorCambiado!='Residencial'){
+                    $('.riff').css('display','block');
+                }
+                else{
+                    $('.riff').css('display','none');
+                }
+            });
              function bindButtons(){
                     $(document).on('click','.btn-table',function(e){
                         e.preventDefault();
@@ -211,6 +229,19 @@
                             });
                            }
                        }
+                       if($(this).hasClass('borrar')){
+                        if(confirm("Desea borrar el cliente")){
+                            $.ajax({
+                                url: "{{url('Clientes/delete')}}/"+$id,
+                                data: "&_token={{ csrf_token()}}",
+                                type:'DELETE',
+                                dataType: 'json',
+                            }).done(function(data){
+                               alert('Cliente borrado');
+                                showTable();
+                            });
+                           }  
+                       }
                          if($(this).hasClass('editar')){
                             $.ajax({
                                 url: "{{url('Clientes/show')}}/"+$id,
@@ -225,7 +256,10 @@
                                 $('#nombreP').val(data.cliente.nombre);
                                 console.log(data.cliente.nombre);
                                 $('#tipo').val(data.cliente.tipo);
+                                $('#tipo').change();
                                 $('#direccionP').val(data.cliente.direccion);
+                                if(data.cliente.correo){$('#email').val(data.cliente.correo)}
+                                if(data.cliente.riff){$('#riff').val(data.cliente.riff)}
                                 if( data.cliente.telefonos.length >0){
                              
                                // $telefonos=JSON.stringify(data.usuarios.telefonos);

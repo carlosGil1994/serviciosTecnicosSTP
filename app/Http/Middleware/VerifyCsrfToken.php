@@ -17,7 +17,7 @@ class VerifyCsrfToken extends Middleware
         'Fallas*',
         'Materiales*',
         'Usuarios*',
-        'clientes*',
+        'Clientes*',
         'Ordenes*',
         'Actividades*',
         'Especialidades*',

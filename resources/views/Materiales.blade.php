@@ -117,6 +117,17 @@
                        if($(this).hasClass('crear')){
                             $('#oculto').toggle('slow');
                        }
+                       if(confirm("Desea borrar el material?")){
+                            $.ajax({
+                                url: "{{url('Materiales/delete')}}/"+$id,
+                                data: "&_token={{ csrf_token()}}",
+                                type:'DELETE',
+                                dataType: 'json',
+                            }).done(function(data){
+                               alert('Material borrado');
+                                showTable();
+                            });
+                        } 
                        if($(this).hasClass('completar')){
                            if(confirm("Desea completar la actividad")){
                             $.ajax({

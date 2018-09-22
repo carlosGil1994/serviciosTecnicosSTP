@@ -85,7 +85,7 @@ Route::group(['prefix' => 'Usuarios','middleware' => ['auth']], function () {
     Route::put('edit/{id}','UsuariosController@update')->name('update_Usuario');
     Route::delete('delete/{id}','UsuariosController@destroy')->name('delete_Usuario');
 });
-Route::group(['prefix' => 'Clientes','middleware' => ['auth']], function () {
+Route::group(['prefix' => 'Clientes'/*,'middleware' => ['auth']*/], function () {
     Route::get('index','ClientesController@index')->name('Clientes.index');
     Route::get('busqueda/{busqueda}','ClientesController@busqueda')->name('busqueda_Clientes');
     Route::get('clienteTable','ClientesController@clienteTable')->name('Clientes_table');
@@ -94,8 +94,10 @@ Route::group(['prefix' => 'Clientes','middleware' => ['auth']], function () {
     Route::put('edit/{id}','ClientesController@update')->name('update_Clientes');
     Route::delete('delete/{id}','ClientesController@destroy')->name('delete_Clientes');
 });
-Route::group(['prefix' => 'Ordenes','middleware' => ['auth']], function () {
+Route::group(['prefix' => 'Ordenes'/*,'middleware' => ['auth']*/], function () {
     Route::get('index','OrdenesController@index')->name('Ordenes_index');
+    Route::get('evaluacion','OrdenesController@evaluacionTecnicosview')->name('ordenes.tecnicos');
+    Route::post('evaluacionTecnicos','OrdenesController@evaluacionTecnicos')->name('orden_evaluacionTecnicos');
     Route::get('show/{id}','OrdenesController@show')->name('show_Orden');
     Route::post('add_new','OrdenesController@store')->name('add_Orden');
     Route::put('edit/{id}','OrdenesController@update')->name('update_Orden');

@@ -68,6 +68,7 @@
                     <a href="{{ route('Equipos.index') }}">Equipos</a>
                     <a href="{{ route('Materiales.index') }}">Materiales</a>
                     <a href="{{ route('Actividades.index') }}">ordenes</a>
+                    <a href="{{ route('ordenes.tecnicos') }}">Evaluación Técnicos</a>
                     @endif
                     @if(Auth::user()->tipo==2)
                     <a href="{{ route('Equipos.index') }}">Equipos</a>

@@ -10,10 +10,10 @@ class Equipos extends Model
         'descripcion', 'modelo','precio'
     ];
 
-   /* public function actividades(){
-        return $this->belongsToMany('App\Actividades','equipos_por_actividad','equipos_id','actividad_id')->withPivot('cantidad');
+    public function actividades(){
+        return $this->belongsToMany('App\Actividades','equipos_por_actividad','equipo_id','actividad_id')->withPivot('cantidad');
     }
-    public function fallas(){
+   /* public function fallas(){
         return $this->belongsToMany('App\Fallas','fallas_por_equipos','equipo_id','falla_id')->withPivot('actividad_id')->withTimestamps('created_at', 'updated_at');
     }*/
     public function fallas(){

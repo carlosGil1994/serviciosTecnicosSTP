@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Acciones;
 use DataTables;
@@ -29,6 +29,9 @@ class AccionesController extends Controller
             $output = <<<EOT
             <a href="#" data="$Accion->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
 EOT;
+        if(Auth::user()->tipo==1){
+            $output.= ' <a href="#edit-'.$Accion->id.'" data="'.$Accion->id.'"title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>';
+        }
        return $output;
         })->make();
     }
@@ -140,7 +143,17 @@ EOT;
     public function destroy($id)
     {
         try {
-            $accion = Acciones::findOrFail($request->id)->delete();
+            $accion = Acciones::findOrFail($id);
+            $actividades= $accion->actividades;
+            if($actividades){
+                foreach ($actividades as $actividad) {
+                    foreach ($actividad->fallas as $falla) {
+                        $falla->delete();
+                    }
+                    $actividad->delete();
+                }
+            }
+            
             return response()->json(['delete' => true], 200);
         }
         catch(Exeption $e){

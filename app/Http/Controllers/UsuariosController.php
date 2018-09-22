@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Tlfns_usuarios;
 use App\Propiedades;
@@ -47,7 +48,12 @@ class UsuariosController extends Controller
         $users = User::all();
         return DataTables::of($users)
         ->addColumn('action', function ($user) {
-            return '<a href="#edit-'.$user->id.'" data="'.$user->id.'" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
+            $output='';
+            $output.='<a href="#edit-'.$user->id.'" data="'.$user->id.'" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>';
+            if(Auth::user()->tipo==1){
+                $output.= ' <a href="#edit-'.$user->id.'" data="'.$user->id.'"title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>';
+            }
+            return $output;
         })->make();
     }
 
@@ -342,6 +348,7 @@ class UsuariosController extends Controller
         try{
             $usuario= User::find($id);
             $usuario->telefonos()->delete();
+            $usuario->clientes()->detach();
             $usuario->delete();
              return response()->json(['delete' => true],200);
         } 

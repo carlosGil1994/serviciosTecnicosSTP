@@ -57,6 +57,9 @@ class MaterialesController extends Controller
             <a href="#" data="$Material->id" title="Editar" class="btn btn-xs btn-primary btn-table editar"><i class="fas fa-edit"></i></a>
 EOT;
             }
+            if(Auth::user()->tipo==1){
+                $output.= ' <a href="#edit-'.$Material->id.'" data="'.$Material->id.'"title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>';
+            }
        // $output .=' <a data="'.$ordenes->id.'"class="btn btn-xs btn-primary btn-table completar"><i class="glyphicon glyphicon-edit"></i>completar</a>';
         //$output .=' <a href='."'".url("Equipos/fallas")."/".$Equipo->id."'".'"data="'.$Equipo->id.'"class="btn btn-xs btn-primary "><i class="glyphicon glyphicon-edit"></i>Fallas</a>';
        // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
@@ -174,6 +177,15 @@ EOT;
     {
         try{
             $Material=Materiales::findOrFail($id);
+            $actividades= $Material->actividades;
+            if($actividades){
+                foreach ($actividades as $actividad) {
+                    foreach ($actividad->fallas as $falla) {
+                        $falla->delete();
+                    }
+                    $actividad->delete();
+                }
+            }
             $Material->delete();
             return response()->json(['delete' => true]);
         } 

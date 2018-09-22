@@ -103,6 +103,7 @@
             $telefonos=[];
             $telefonosP=[];
             $usuarios=[];
+            
 
              function bindButtons(){
                     $(document).on('click','.btn-table',function(e){
@@ -111,6 +112,19 @@
                         console.log($id);
                        if($(this).hasClass('crear')){
                             $('#oculto').toggle('slow');
+                       }
+                       if($(this).hasClass('borrar')){
+                        if(confirm("Desea borrar la acción?")){
+                            $.ajax({
+                                url: "{{url('Acciones/delete')}}/"+$id,
+                                data: "&_token={{ csrf_token()}}",
+                                type:'DELETE',
+                                dataType: 'json',
+                            }).done(function(data){
+                               alert('Acción borrada');
+                                showTable();
+                            });
+                           }  
                        }
                        if($(this).hasClass('completar')){
                            if(confirm("Desea completar la actividad")){

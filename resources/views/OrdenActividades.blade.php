@@ -62,6 +62,19 @@
                        if($(this).hasClass('crear')){
                             $('#oculto').toggle('slow');
                        }
+                       if($(this).hasClass('borrar')){
+                        if(confirm("Desea borrar la actividad?")){
+                            $.ajax({
+                                url: "{{url('Actividades/delete')}}/"+$id,
+                                data: "&_token={{ csrf_token()}}",
+                                type:'DELETE',
+                                dataType: 'json',
+                            }).done(function(data){
+                               alert('Actividad borrada');
+                                showTable();
+                            });
+                           }  
+                       }
                        if($(this).hasClass('completar')){
                            if(confirm("Desea completar la actividad")){
                             $.ajax({

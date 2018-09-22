@@ -18,6 +18,7 @@ class CreateClientesTable extends Migration
             $table->string('nombre');
             $table->string('direccion');
             $table->string('tipo');
+            $table->string('riff')->nullable();
             $table->timestamps();
         });
     }

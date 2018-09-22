@@ -43,6 +43,10 @@ class User extends Authenticatable
     public function telefonos(){
         return $this->hasMany('App\Tlfns_usuarios','user_id','id');
     }
+    public function ordenservicios(){
+        return $this->hasMany('App\Orden_servicios','tecnico_id','id');
+    }
+
 
 
 

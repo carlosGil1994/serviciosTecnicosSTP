@@ -85,6 +85,9 @@ EOT;
             $output .=' <a href='."'".url("Fallas/showFallas")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary "><i class="fas fa-exclamation-triangle"></i></a>';
            // $output .=' <a href='."'".url("Actividades/completar")."/".$actividad->id."'".'"data="'.$actividad->id.'"class="btn btn-xs btn-primary btn-table crear"><i class="glyphicon glyphicon-edit"></i>completar</a>';
             }
+            if(Auth::user()->tipo==1 ||Auth::user()->tipo==2 ){
+                $output.= ' <a href="#edit-'.$actividad->id.'" data="'.$actividad->id.'"title="borrar" class="btn btn-xs btn-primary btn-table borrar"><i class="fas fa-trash-alt"></i></a>';
+            }
                
        return $output;
         })->make();
@@ -311,7 +314,9 @@ EOT;
             $actividad->materiales()->detach();
             //si se esta agregando un equipo a la actividad
             if(isset($datos['equipo_id'])&& $datos['equipo_id']!=''){
+              // dd($datos['equipo_id']);
                 foreach ($datos['equipo_id'] as $equipo) {
+                //dd($equipo['equipo']);
                     $Equipo=Equipos::findOrFail($equipo['equipo']);
                      $actividad->equipos()->where("actividad_id",$actividad->id)
                      ->save($Equipo,['cantidad'=>$equipo['cantidad']]);

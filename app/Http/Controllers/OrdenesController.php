@@ -27,6 +27,14 @@ class OrdenesController extends Controller
     {
     
     }
+    public function evaluacionTecnicosview(){
+        return view('EvaluacionTecnicos')->with(array(
+            'mod' => 'Ordenes',
+            'cantidad' => 0,
+            'header' => 'Evaluacion técnico',
+            'mostrarBoton'=>false
+        ));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -85,33 +93,55 @@ class OrdenesController extends Controller
         $orden['fecha']=$date;
         $suma=0;
         $sumaTotal=0;
+        $acciones=[];
 
         foreach ($actividades as $act) {
+            $encontro=false;
+            $aux=Actividades::findOrFail($act->id)->accion;
+                foreach ($acciones as $accn) {
+                    if($aux->nombre==$accn->nombre){
+                        $encontro=true;
+                    }
+                }
+                if($encontro==false){
+                    $acciones[]=$aux; 
+                }
+            
             $accion= Actividades::findOrFail($act->id)->accion->costo;
             $equiposArray=[];
             $materialesArray=[];
             $equipos=Actividades::find($act->id)->equipos;
             $materiales=Actividades::find($act->id)->materiales;
-            $accionnombre= Actividades::findOrFail($act->id)->accion;
+            $accionnombre= Actividades::findOrFail($act->id)->accion->nombre;
             if($equipos){
                 foreach ($equipos as $equipo) {
                   
                     if( $accionnombre=='instalacion'){ //hay que cambiar esto a mayuscula
                         $suma = $suma +( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
                         $equipo['totalEquipo']=( $equipo->precio*$equipo->pivot->cantidad)+($accion*$equipo->pivot->cantidad);
+                        $equipo['precio']=$equipo->precio+$accion;
                         $equiposArray[]=$equipo;
+                        /*foreach ($acciones as $accn) {
+                            if($accn->nombre== $accionnombre){
+                                $accn['precio']=($accion*$equipo->pivot->cantidad);
+                            }
+                        }*/
                    }
                    else{
                        $suma = $suma +($accion*$equipo->pivot->cantidad);
                        $equipo['totalEquipo']=($accion*$equipo->pivot->cantidad);
-                       $equipo['precio']=$suma;
+                       $equipo['precio']=$accion;
                        $equiposArray[]=$equipo;
+                       /*foreach ($acciones as $accn) {
+                        if($accn->nombre== $accionnombre){
+                            $accn['precio']=($accion*$equipo->pivot->cantidad);
+                        }
+                       }*/
                    }
                 }
             }
             if($materiales){
                 foreach ($materiales as $material) {
-                   
                     if($material->pivot->cantidad){
                         $material['totalMaterial']=( $material->precio*$material->pivot->cantidad);
                         $suma = $suma +( $material->precio*$material->pivot->cantidad);    
@@ -123,11 +153,15 @@ class OrdenesController extends Controller
                     $materialesArray[]=$material;
                 }
             }
-            $act['action']=Actividades::findOrFail($act->id)->accion;
-            $act['equipos']= $equiposArray;
-            $act['materiales']= $materialesArray;
+           // $act['action']=Actividades::findOrFail($act->id)->accion;
+           $act['action']=$aux; //aqui se esta guardando la accion de cada actidivad
+           $act['equipos']= $equiposArray;
+           $act['materiales']= $materialesArray;
         }
+        $orden['acciones']=$acciones;
         $orden['subtotal']=$suma;
+        $orden['iva']=number_format((float)($suma*0.16), 2, '.', '');
+        $orden['total']=round($suma+($suma*0.16), 2);
         $orden['actividades']=$actividades;
         $orden->pagoServicio()->update(['pago_total'=>$suma,'estado'=>'Espera del 50%']);
        // dd($orden);
@@ -193,7 +227,13 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
                     'errors'  => $validator->errors()->all()
                  ]);
             }
-            $orden= Orden_servicios::create(['cliente_id'=>$cliente['cliente'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'creador_id'=>Auth::id(),'servicio_id'=>$request->servicio,'estado'=>$estado]);
+            if($request->has('tecnico')){
+                $orden= Orden_servicios::create(['cliente_id'=>$cliente['cliente'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'creador_id'=>Auth::id(),'servicio_id'=>$request->servicio,'estado'=>$estado,'tecnico_id'=>$request->tecnico]);
+            }
+            else{
+                $orden= Orden_servicios::create(['cliente_id'=>$cliente['cliente'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'creador_id'=>Auth::id(),'servicio_id'=>$request->servicio,'estado'=>$estado]);
+            }
+           
            // $orden= Orden_servicios::create([$request->all()]);
            $orden->pagoServicio()->create(['estado'=>'En espera']);
             return response()->json(['create' => true], 200);
@@ -249,7 +289,7 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
      */
     public function update(Request $request, $id)
     {
-       // dd($request);
+        //dd($request->tecnico);
         $fecha=new Carbon($request->fechaIni.' '.$request->timepicker1);
         $cliente=json_decode($request->cliente, true);
         $estado='asignado';
@@ -274,7 +314,13 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
                     $estado=$request->estado;
                 }
             }
-            $orden->update(['cliente_id'=>$cliente['id'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'servicio_id'=>$request->servicio,'estado'=>$estado]);
+            if($request->has('tecnico')){
+                $orden->update(['cliente_id'=>$cliente['id'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'servicio_id'=>$request->servicio,'estado'=>$estado,'tecnico_id'=>$request->tecnico]);
+            }
+            else{
+                $orden->update(['cliente_id'=>$cliente['id'],'descripcion'=>$request->descripcion,'fecha_ini'=>$request->fecha,'servicio_id'=>$request->servicio,'estado'=>$estado]);
+            }
+           
             return response()->json(['update' => true]);
         } 
         catch(ModelNotFoundException $e){
@@ -378,6 +424,15 @@ file_put_contents(storage_path('app/public/cotizaciones').'/'.$nombreArchivo, $o
         $orden->update(['cancelador_id'=> $user->id,'estado'=>'cancelado']);
         $pagoServicio =  $orden->pagoServicio()->update(['estado'=>'cancelado']);
         return response()->json(['update' => true], 200);
+    }
+    public function evaluacionTecnicos(Request $request){
+        $fechaInicio = new Carbon($request->fechaInicio.' '.'00:00:00');
+        $fechaFinal = new Carbon($request->fechaFinal.' '."23:59:59");
+        $tecnicos= User::where('tipo',2)->get();
+        foreach ($tecnicos as $tecnico) {
+            $tecnico['tecnicoordenesCompletadas']=$tecnico->ordenservicios()->whereBetween('created_at', [ $fechaInicio,  $fechaFinal])->where('estado','completado')->count();
+        }
+        return response()->json(['tecnicos' => $tecnicos], 200);
     }
     public function calculoMonto($id){
         try {

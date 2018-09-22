@@ -48,10 +48,12 @@ class FallasController extends Controller
     }
 
     public function fallaTable($id){
+        $cliente=Actividades::find($id)->ordenservicio->clientes;
         $Fallas=Actividades::find($id)->fallas;
         foreach ($Fallas as $falla) {
             $equipo=Equipos::find($falla->equipo_id);
             $falla['equipo']=$equipo->descripcion.' '.$equipo->modelo;
+            $falla['cliente']=$cliente->nombre;
         }
               //  dd($mostrar['relations']['fallas']);
         //$fallas=$mostrar->fallas;
@@ -107,7 +109,7 @@ class FallasController extends Controller
             // Si el validador pasa, almacenamos
             //Fallas::create($request->all());
             //$falla = new Fallas([$request->descripcion,$request->causa,$request->solucion]);
-           $Equipo=Equipos::findOrFail($request->equipo);
+           //$Equipo=Equipos::findOrFail($request->equipo);
            /*$falla=$Equipo->fallas()->create([
                 'descripcion' =>$request->descripcion,
                 'causa' =>$request->causa,
@@ -115,8 +117,8 @@ class FallasController extends Controller
            ]);*/
            $fallas = new Fallas;
            ////// forma de guradar anidadamente cunado es many to many teniendo columnas adicionales en la tablla de union////////
-           $fallas->create(["descripcion"=>$request->descripcion,"causa"=>$request->causa,"solucion"=>$request->solucion,'equipo_id'=>$request->equipo])
-           ->actividades()->attach($request->actividad);
+           $fallas->create(["descripcion"=>$request->descripcion,"causa"=>$request->causa,"solucion"=>$request->solucion,'equipo_id'=>$request->equipo,'actividad_id'=>$request->actividad]);
+           /*->actividades()->attach($request->actividad);*/
            /*->equipos()->where("falla_id",$fallas->id)
            ->save($Equipo,["actividad_id"=>$request->actividad]);*/
            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

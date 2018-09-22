@@ -8,28 +8,7 @@
     @endcomponent
     <br>
 
-    {{--Componente de la barra de busqueda--}}
-    @component('componentes.search')
-        @slot('mod', $mod)
-        @slot('inputs')
-
-        @endslot
-    @endcomponent
-    <br>
-    <table id="table" class="table table-striped table-bordered"
-    width="100%" role="grid" style="width: 100%;">
-        <thead class="thead-dark">
-            <tr>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Dirección</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-
-        <tbody>
-        </tbody>
-    </table>
+   
     {{--Componente del panel para agregar nuevo registro--}}
     @component('componentes.paneladdnew')
         @slot('mod', $mod)
@@ -52,15 +31,15 @@
                             <input type="text" class="form-control" id="name" name="name" placeholder="Nombre del usuario">
                         </div>
                         <div class="form-group">
-                            <label for="apellido">apellido</label>
+                            <label for="apellido">Apellido</label>
                             <input type="text" class="form-control" id="apellido" name="apellido" placeholder="Apellido del usuario">
                         </div>
                         <div class="form-group">
-                            <label for="email">correo</label>
+                            <label for="email">Correo</label>
                             <input type="text" class="form-control" id="email" name="email" placeholder="correo del usuario">
                         </div>
                         <div class="form-group">
-                            <label for="password">contraseña</label>
+                            <label for="password">Contraseña</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="contraseña del usuario">
                         </div>
                         <div class="form-group">
@@ -174,6 +153,20 @@
             
         @endslot
     @endcomponent
+    <br>
+    <table id="table" class="table table-striped table-bordered"
+    width="100%" role="grid" style="width: 100%;">
+        <thead class="thead-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Dirección</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
     {{--Componente para el view del panel--}}
     @component('componentes.panelview')
@@ -188,7 +181,46 @@
         @endslot
     @endcomponent--}}
     <script>
-
+function showTable(){
+                $('#table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    destroy: true,
+                    language: {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    }
+                    ,
+                    ajax: "{{ url('Usuarios/usertable')}}",
+                    type: 'GET',
+                    columns: [
+                        {data: 'name', name: 'name' },
+                        {data:'apellido',name:'apellido'},
+                        {data:'direccion',name:'direccion'},
+                        { data: 'action', name: 'action', orderable: false, searchable: false }
+                    ]   
+                });
+            }
         function bindTipo(elemento){
             elemento.change(function(){
                 let valorCambiado =$(this).val();
@@ -231,52 +263,27 @@
             $telefonos=[];
             $telefonosP=[];
             $servicios=[];
-            function showTable(){
-                $('#table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    destroy: true,
-                    language: {
-                        "sProcessing":     "Procesando...",
-                        "sLengthMenu":     "Mostrar _MENU_ registros",
-                        "sZeroRecords":    "No se encontraron resultados",
-                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                        "sInfoPostFix":    "",
-                        "sSearch":         "Buscar:",
-                        "sUrl":            "",
-                        "sInfoThousands":  ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst":    "Primero",
-                            "sLast":     "Último",
-                            "sNext":     "Siguiente",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    }
-                    ,
-                    ajax: "{{ url('Usuarios/usertable')}}",
-                    type: 'GET',
-                    columns: [
-                        {data: 'name', name: 'name' },
-                        {data:'apellido',name:'apellido'},
-                        {data:'direccion',name:'direccion'},
-                        { data: 'action', name: 'action', orderable: false, searchable: false }
-                    ]   
-                });
-            }
+           
+            
 
             function bindButtons(){
                 $(document).on('click','.btn-table',function(e){
                     e.preventDefault();
                     $id = $(this).attr('data');
                     console.log($id);
+                    if($(this).hasClass('borrar')){
+                        if(confirm("Desea borrar el usuario?")){
+                            $.ajax({
+                                url: "{{url('Usuarios/delete')}}/"+$id,
+                                data: "&_token={{ csrf_token()}}",
+                                type:'DELETE',
+                                dataType: 'json',
+                            }).done(function(data){
+                               alert('Usuario borrado');
+                                showTable();
+                            });
+                           }  
+                    }
                   
                      if($(this).hasClass('editar')){
                         $.ajax({
